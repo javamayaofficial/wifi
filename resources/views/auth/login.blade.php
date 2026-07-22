@@ -2,6 +2,11 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        Gunakan URL login aman:
+        <a class="font-semibold underline" href="{{ route('signin') }}">{{ route('signin') }}</a>
+    </div>
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
