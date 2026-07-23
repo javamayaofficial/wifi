@@ -68,9 +68,9 @@
                             </button>
                         </form>
                         <form method="POST" action="{{ url("/customers/{$c->id}/portal-password") }}" class="d-inline"
-                              onsubmit="return confirm('Buat/reset password portal untuk pelanggan ini?')">
+                              onsubmit="return confirm('Kirim panduan akses portal via OTP WhatsApp untuk pelanggan ini?')">
                             @csrf
-                            <button class="btn btn-sm btn-outline-primary" title="Buat password portal pelanggan">Portal</button>
+                            <button class="btn btn-sm btn-outline-primary" title="Kirim akses portal via OTP WhatsApp">Portal</button>
                         </form>
                         <form method="POST" action="{{ url("/customers/{$c->id}") }}" class="d-inline"
                               onsubmit="return confirm('Hapus pelanggan ini?')">

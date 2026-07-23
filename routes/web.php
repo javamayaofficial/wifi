@@ -42,6 +42,7 @@ Route::get('/bayar/{username}/invoice/{orderId}', [InvoiceController::class, 'pu
  |--------------------------------------------------------------------------
  */
 Route::get('/portal/login', [PortalAuthController::class, 'showLogin']);
+Route::post('/portal/login/request-otp', [PortalAuthController::class, 'requestOtp']);
 Route::post('/portal/login', [PortalAuthController::class, 'login']);
 Route::post('/portal/logout', [PortalAuthController::class, 'logout']);
 

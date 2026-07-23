@@ -100,27 +100,24 @@ class CustomerController extends Controller
         }
     }
 
-    /** Buat/reset password portal pelanggan lalu kirim via WhatsApp. */
+    /** Kirim ulang info akses portal pelanggan via WhatsApp. */
     public function resetPortalPassword(Customer $customer): RedirectResponse
     {
-        $plain = 'thre' . random_int(100000, 999999);
-
-        $customer->update(['portal_password' => $plain]);   // di-hash oleh cast
-
-        if ($customer->phone) {
-            SendWhatsAppNotification::dispatch(
-                $customer,
-                "[THRE.F.NET - Akun Portal]\n"
-                . "Halo {$customer->name}, berikut akses portal pelanggan Anda:\n"
-                . "Username: {$customer->username}\n"
-                . "Password: {$plain}\n"
-                . config('app.url') . "/portal/login\n"
-                . 'Mohon jangan bagikan password ini kepada siapa pun.',
-                'portal_password'
-            );
+        if (! $customer->phone) {
+            return back()->with('error', 'Nomor WhatsApp pelanggan belum diisi.');
         }
 
-        return back()->with('success', "Password portal dibuat: {$plain} (dikirim via WhatsApp bila nomor tersedia).");
+        SendWhatsAppNotification::dispatch(
+            $customer,
+            "[THRE.F.NET - Portal Pelanggan]\n"
+            . "Halo {$customer->name}, akses portal pelanggan sekarang menggunakan OTP WhatsApp.\n"
+            . "Buka: " . config('app.url') . "/portal/login\n"
+            . "Masukkan nomor WhatsApp Anda, lalu verifikasi kode OTP yang dikirim.\n"
+            . 'Mohon jangan bagikan kode OTP kepada siapa pun.',
+            'portal_access'
+        );
+
+        return back()->with('success', 'Panduan akses portal via OTP berhasil dikirim ke WhatsApp pelanggan.');
     }
 
     public function importForm(): View

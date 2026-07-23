@@ -53,8 +53,8 @@
                 <form method="POST" action="{{ url('/login') }}">
                     @csrf
                     <div class="mb-3">
-                        <label class="form-label">Email, Username, atau No. WhatsApp</label>
-                        <input type="text" name="login" class="form-control" value="{{ old('login', old('email')) }}" placeholder="admin / admin@domain / 08xxxxxxxxxx" required autofocus>
+                        <label class="form-label">Username Admin</label>
+                        <input type="text" name="login" class="form-control" value="{{ old('login') }}" placeholder="admin" required autofocus>
                         @error('login')
                             <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
@@ -70,44 +70,11 @@
                     <button class="btn btn-primary w-100">Masuk</button>
                 </form>
             </div>
-
-            <hr class="my-4">
-
-            <div>
-                <div class="small text-uppercase fw-semibold mb-2" style="letter-spacing:.08em;color:#7A8CA5">Masuk via WhatsApp</div>
-                <p class="small mb-3" style="color:#7A8CA5">Masukkan nomor WhatsApp admin, kirim OTP, lalu isi kode 6 digit untuk masuk.</p>
-
-                <form method="POST">
-                    @csrf
-                    <div class="mb-3">
-                        <label class="form-label">Nomor WhatsApp</label>
-                        <input type="text" name="otp_phone" class="form-control" value="{{ old('otp_phone') }}" placeholder="08xxxxxxxxxx" autocomplete="tel" required>
-                        @error('otp_phone')
-                            <div class="text-danger small mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label class="form-label mb-0">Kode OTP</label>
-                            <button class="btn btn-link btn-sm p-0 text-decoration-none" formaction="{{ route('signin.otp.request') }}">Kirim OTP</button>
-                        </div>
-                        <input type="text" name="otp_code" class="form-control" inputmode="numeric" maxlength="6" placeholder="6 digit OTP" required>
-                        @error('otp_code')
-                            <div class="text-danger small mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="form-check mb-3">
-                        <input type="checkbox" name="otp_remember" value="1" class="form-check-input" id="otpRemember">
-                        <label class="form-check-label small" for="otpRemember">Ingat sesi perangkat ini</label>
-                    </div>
-                    <button class="btn btn-dark w-100" formaction="{{ route('signin.otp.verify') }}">Masuk via OTP WhatsApp</button>
-                </form>
-            </div>
         </div>
     </div>
 
     <p class="text-center small mt-3 mb-0" style="color:#7A8CA5">
-        Pelanggan? <a href="{{ url('/portal/login') }}" style="color:#A9B8CC">Masuk ke portal pelanggan</a>
+        Pelanggan? <a href="{{ url('/portal/login') }}" style="color:#A9B8CC">Masuk ke portal pelanggan via OTP WhatsApp</a>
     </p>
 </div>
 </body>

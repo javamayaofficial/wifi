@@ -23,10 +23,12 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_authenticate_using_the_login_screen(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'username' => 'admin',
+        ]);
 
         $response = $this->post('/login', [
-            'login' => $user->email,
+            'login' => 'admin',
             'password' => 'password',
         ]);
 
@@ -36,10 +38,12 @@ class AuthenticationTest extends TestCase
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create([
+            'username' => 'admin',
+        ]);
 
         $this->post('/login', [
-            'login' => $user->email,
+            'login' => 'admin',
             'password' => 'wrong-password',
         ]);
 
@@ -58,21 +62,6 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
-    }
-
-    public function test_users_can_authenticate_using_whatsapp_number(): void
-    {
-        $user = User::factory()->create([
-            'phone' => '08123456789',
-        ]);
-
-        $response = $this->post('/login', [
-            'login' => '08123456789',
-            'password' => 'password',
-        ]);
-
-        $this->assertAuthenticatedAs($user);
         $response->assertRedirect(route('dashboard', absolute: false));
     }
 
