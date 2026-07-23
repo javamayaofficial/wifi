@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -13,9 +14,13 @@ Schedule::command('threfnet:check-expired')
     ->everyMinute()
     ->withoutOverlapping();
 
-// Reminder harian H-7 sampai H-1, plus follow-up H+1 (sekali sehari pagi hari).
+// Reminder harian H-7 sampai H-1, plus follow-up H+1 (jam kirim bisa diatur dari admin panel).
 Schedule::command('threfnet:send-reminders')
-    ->dailyAt('08:00')
+    ->dailyAt(Setting::get('reminder_h7_time', config('threfnet.reminders.h7_daily_time', '08:00')))
+    ->when(fn () => filter_var(
+        Setting::get('reminder_h7_enabled', config('threfnet.reminders.h7_daily_enabled', true)),
+        FILTER_VALIDATE_BOOLEAN
+    ))
     ->withoutOverlapping();
 
 // Pantau kesehatan router + alert Telegram bila turun/pulih.

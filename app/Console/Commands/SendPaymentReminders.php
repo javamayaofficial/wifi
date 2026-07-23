@@ -26,6 +26,12 @@ class SendPaymentReminders extends Command
 
     public function handle(): int
     {
+        if (! filter_var(Setting::get('reminder_h7_enabled', config('threfnet.reminders.h7_daily_enabled', true)), FILTER_VALIDATE_BOOLEAN)) {
+            $this->warn('Reminder otomatis H-7 sedang nonaktif.');
+
+            return self::SUCCESS;
+        }
+
         $total = 0;
         $dryRun = (bool) $this->option('dry-run');
         $today = today();

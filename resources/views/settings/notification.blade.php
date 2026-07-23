@@ -159,6 +159,33 @@
                         Teks default sudah disediakan dan bisa Anda ubah kapan saja.
                     </p>
 
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-7">
+                            <div class="border rounded-3 p-3 h-100">
+                                <div class="form-check form-switch">
+                                    <input type="hidden" name="reminder_h7_enabled" value="0">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="reminder_h7_enabled"
+                                           name="reminder_h7_enabled" value="1"
+                                           @checked(old('reminder_h7_enabled', $values['reminder_h7_enabled'] ?? true))>
+                                    <label class="form-check-label fw-semibold" for="reminder_h7_enabled">
+                                        Aktifkan reminder otomatis H-7
+                                    </label>
+                                </div>
+                                <div class="form-text mt-2">
+                                    Jika nonaktif, scheduler reminder harian tidak akan mengirim pesan ke pelanggan.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="border rounded-3 p-3 h-100">
+                                <label class="form-label">Jam Kirim Harian</label>
+                                <input type="time" name="reminder_h7_time" class="form-control"
+                                       value="{{ old('reminder_h7_time', $values['reminder_h7_time'] ?? '08:00') }}">
+                                <div class="form-text">Format 24 jam, mengikuti waktu server.</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Teks Notifikasi Default</label>
                         <textarea name="reminder_h7_template" class="form-control" rows="8" placeholder="Tulis template pengingat di sini...">{{ old('reminder_h7_template', $values['reminder_h7_template'] ?? '') }}</textarea>

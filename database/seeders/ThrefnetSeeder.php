@@ -39,6 +39,8 @@ class ThrefnetSeeder extends Seeder
             'company_phone'    => '',
             'company_email'    => 'info@thre.f.net',
             'hotspot_login_url'=> '',
+            'reminder_h7_enabled' => '1',
+            'reminder_h7_time' => config('threfnet.reminders.h7_daily_time'),
             'reminder_h7_template' => config('threfnet.reminders.h7_daily_template'),
         ];
 

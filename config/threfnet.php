@@ -42,6 +42,8 @@ return [
     ],
 
     'reminders' => [
+        'h7_daily_enabled' => (bool) env('REMINDER_H7_DAILY_ENABLED', true),
+        'h7_daily_time' => env('REMINDER_H7_DAILY_TIME', '08:00'),
         'h7_daily_template' => env(
             'REMINDER_H7_DAILY_TEMPLATE',
             "[THRE.F.NET - Pengingat Masa Aktif]\n"

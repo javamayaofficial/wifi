@@ -27,6 +27,8 @@ class NotificationSettingController extends Controller
             'mailketing_from_email'=> Setting::get('mailketing_from_email', config('threfnet.mailketing.from_email')),
             'telegram_bot_token'   => Setting::get('telegram_bot_token'),
             'telegram_chat_id'     => Setting::get('telegram_chat_id'),
+            'reminder_h7_enabled'  => filter_var(Setting::get('reminder_h7_enabled', config('threfnet.reminders.h7_daily_enabled', true)), FILTER_VALIDATE_BOOLEAN),
+            'reminder_h7_time'     => Setting::get('reminder_h7_time', config('threfnet.reminders.h7_daily_time', '08:00')),
             'reminder_h7_template' => Setting::get('reminder_h7_template', config('threfnet.reminders.h7_daily_template')),
         ];
 
@@ -50,6 +52,7 @@ class NotificationSettingController extends Controller
         $request->validate([
             'whatsapp_provider'     => ['nullable', 'in:gateway,fonnte'],
             'whatsapp_country_code' => ['nullable', 'in:62,0'],
+            'reminder_h7_time'      => ['nullable', 'date_format:H:i'],
             'reminder_h7_template'  => ['nullable', 'string', 'max:5000'],
         ]);
 
@@ -70,6 +73,12 @@ class NotificationSettingController extends Controller
                 trim((string) $request->input('reminder_h7_template')) ?: config('threfnet.reminders.h7_daily_template')
             );
         }
+
+        Setting::put('reminder_h7_enabled', $request->boolean('reminder_h7_enabled') ? '1' : '0');
+        Setting::put(
+            'reminder_h7_time',
+            trim((string) $request->input('reminder_h7_time')) ?: config('threfnet.reminders.h7_daily_time', '08:00')
+        );
 
         if ($request->has('whatsapp_provider')) {
             Setting::put('whatsapp_provider', $request->input('whatsapp_provider', 'gateway'));
