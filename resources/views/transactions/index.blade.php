@@ -14,8 +14,8 @@
     <div class="col-auto">
         <select name="method" class="form-select form-select-sm">
             <option value="">Semua metode</option>
-            @foreach(['doku','moota','manual'] as $m)
-                <option value="{{ $m }}" @selected(request('method') === $m)>{{ $m }}</option>
+            @foreach($methodOptions as $code => $meta)
+                <option value="{{ $code }}" @selected(request('method') === $code)>{{ $meta['label'] }}</option>
             @endforeach
         </select>
     </div>
@@ -34,7 +34,7 @@
                     <td><code class="small">{{ $t->order_id }}</code></td>
                     <td>{{ $t->customer?->name }}<div class="small text-muted">{{ $t->customer?->username }}</div></td>
                     <td>Rp {{ number_format($t->amount_final, 0, ',', '.') }}</td>
-                    <td>{{ strtoupper($t->payment_method) }}</td>
+                    <td>{{ $methodOptions[$t->payment_method]['label'] ?? strtoupper($t->payment_method) }}</td>
                     <td>
                         @php $d = ['paid'=>'ok','pending'=>'warn','failed'=>'down'][$t->status] ?? 'idle'; @endphp
                         <span class="text-nowrap"><span class="dot dot-{{ $d }}"></span>{{ $t->status }}</span>

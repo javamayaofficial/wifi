@@ -15,16 +15,40 @@ use Illuminate\Http\Request;
  */
 class ManualGateway implements PaymentGatewayInterface
 {
-    public function __construct(array $config = []) {}
+    protected string $bankInfo;
+    protected string $qrisImageUrl;
+    protected string $qrisNote;
+    protected string $cashNote;
+
+    public function __construct(array $config = [])
+    {
+        $this->bankInfo = (string) ($config['bank_info'] ?? config('threfnet.payments.manual.bank_info', ''));
+        $this->qrisImageUrl = (string) ($config['qris_image_url'] ?? config('threfnet.payments.manual.qris_image_url', ''));
+        $this->qrisNote = (string) ($config['qris_note'] ?? config('threfnet.payments.manual.qris_note', ''));
+        $this->cashNote = (string) ($config['cash_note'] ?? config('threfnet.payments.manual.cash_note', ''));
+    }
 
     public function initiatePayment(Transaction $transaction): PaymentInitResult
     {
+        $selectedMethod = (string) data_get($transaction->raw_response, 'selected_method', $transaction->payment_method);
+
+        $instructions = [
+            'amount' => (int) $transaction->amount,
+        ];
+
+        if ($selectedMethod === 'qris_static') {
+            $instructions['qris_image_url'] = $this->qrisImageUrl;
+            $instructions['note'] = $this->qrisNote ?: 'Scan QRIS lalu tunggu verifikasi admin THRE.F.NET.';
+        } elseif ($selectedMethod === 'cash') {
+            $instructions['note'] = $this->cashNote ?: 'Pembayaran tunai akan diverifikasi manual oleh admin THRE.F.NET.';
+        } else {
+            $instructions['bank_info'] = $this->bankInfo;
+            $instructions['note'] = 'Transfer manual lalu tunggu konfirmasi admin THRE.F.NET.';
+        }
+
         return new PaymentInitResult(
             success: true,
-            instructions: [
-                'amount' => (int) $transaction->amount,
-                'note'   => 'Transfer manual lalu tunggu konfirmasi admin THRE.F.NET.',
-            ],
+            instructions: $instructions,
             message: 'Menunggu verifikasi manual oleh admin.',
         );
     }
@@ -50,6 +74,9 @@ class ManualGateway implements PaymentGatewayInterface
     {
         return [
             'manual_bank_info' => ['label' => 'Info Rekening (ditampilkan ke pelanggan)', 'type' => 'textarea'],
+            'manual_qris_image_url' => ['label' => 'URL Gambar QRIS Statis', 'type' => 'text'],
+            'manual_qris_note' => ['label' => 'Catatan QRIS Statis', 'type' => 'textarea'],
+            'manual_cash_note' => ['label' => 'Catatan Pembayaran Tunai', 'type' => 'textarea'],
         ];
     }
 }

@@ -18,6 +18,15 @@ return [
         'bank_holder'     => env('MOOTA_BANK_HOLDER', 'THRE.F.NET'),
     ],
 
+    'payments' => [
+        'manual' => [
+            'bank_info' => env('MANUAL_BANK_INFO', ''),
+            'qris_image_url' => env('MANUAL_QRIS_IMAGE_URL', ''),
+            'qris_note' => env('MANUAL_QRIS_NOTE', 'Scan QRIS sesuai nominal tagihan Anda, lalu tunggu verifikasi admin THRE.F.NET.'),
+            'cash_note' => env('MANUAL_CASH_NOTE', 'Silakan hubungi admin atau teknisi untuk konfirmasi pembayaran tunai.'),
+        ],
+    ],
+
     'mailketing' => [
         'api_token'  => env('MAILKETING_API_TOKEN'),
         'from_name'  => env('MAILKETING_FROM_NAME', 'THRE.F.NET'),

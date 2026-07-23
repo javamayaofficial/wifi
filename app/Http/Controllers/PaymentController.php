@@ -7,6 +7,8 @@ use App\Models\Transaction;
 use App\Services\Payments\PaymentManager;
 use App\Services\Payments\TransactionService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
@@ -29,31 +31,46 @@ class PaymentController extends Controller
     {
         $customer = Customer::with('plan')->where('username', $username)->firstOrFail();
 
-        $driver  = $this->payments->activeDriverName();
-        $methods = $this->payments->driver()->getSupportedMethods();
+        $options = $this->payments->publicOptions();
+        $recommendedOption = collect($options)
+            ->first(fn ($option) => $option['driver'] === $this->payments->activeDriverName() && ($option['ready'] ?? false));
+
+        if (! $recommendedOption) {
+            $recommendedOption = collect($options)->firstWhere('ready', true) ?? collect($options)->first();
+        }
 
         $pending = Transaction::where('customer_id', $customer->id)
             ->where('status', 'pending')
             ->latest()
             ->first();
 
-        return view('pay.show', compact('customer', 'driver', 'methods', 'pending'));
+        return view('pay.show', compact('customer', 'options', 'pending', 'recommendedOption'));
     }
 
-    /** Buat transaksi & jalankan driver aktif. */
-    public function pay(string $username): RedirectResponse
+    /** Buat transaksi & jalankan metode yang dipilih pelanggan. */
+    public function pay(Request $request, string $username): RedirectResponse
     {
         $customer = Customer::with('plan')->where('username', $username)->firstOrFail();
+        $options = collect($this->payments->publicOptions())->keyBy('code');
 
-        // Gunakan transaksi pending yang ada agar tidak menumpuk tagihan ganda.
+        $data = $request->validate([
+            'option' => ['required', 'string', Rule::in($options->keys()->all())],
+        ]);
+
+        $selected = $options->get($data['option']);
+
+        if (! $selected || ! ($selected['ready'] ?? false)) {
+            return back()->with('error', 'Metode pembayaran ini belum siap digunakan. Lengkapi pengaturannya dulu dari admin panel.');
+        }
+
         $transaction = Transaction::where('customer_id', $customer->id)
             ->where('status', 'pending')
-            ->where('payment_method', $this->payments->activeDriverName())
+            ->where('payment_method', $selected['code'])
             ->latest()
             ->first()
-            ?? $this->transactions->createFor($customer);
+            ?? $this->transactions->createFor($customer, $selected['driver'], $selected['code']);
 
-        $result = $this->payments->driver()->initiatePayment($transaction);
+        $result = $this->payments->driver($selected['driver'])->initiatePayment($transaction);
 
         if (! $result->success) {
             return back()->with('error', $result->message ?? 'Gagal memulai pembayaran.');
@@ -77,9 +94,11 @@ class PaymentController extends Controller
 
         abort_unless($transaction->customer->username === $username, 404);
 
-        $result = $this->payments->driver($transaction->payment_method)->initiatePayment($transaction);
+        $driver = $this->payments->resolveDriverForTransaction($transaction);
+        $paymentLabel = $this->payments->labelForMethod($transaction->payment_method);
+        $result = $this->payments->driver($driver)->initiatePayment($transaction);
 
-        return view('pay.instructions', compact('transaction', 'result'));
+        return view('pay.instructions', compact('transaction', 'result', 'paymentLabel'));
     }
 
     /** Cek status pembayaran. */
@@ -91,6 +110,8 @@ class PaymentController extends Controller
 
         abort_unless($transaction->customer->username === $username, 404);
 
-        return view('pay.status', compact('transaction'));
+        $paymentLabel = $this->payments->labelForMethod($transaction->payment_method);
+
+        return view('pay.status', compact('transaction', 'paymentLabel'));
     }
 }

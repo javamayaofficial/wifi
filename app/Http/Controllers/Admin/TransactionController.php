@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Services\Payments\PaymentCompletionService;
+use App\Services\Payments\PaymentManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,10 @@ use Illuminate\View\View;
 
 class TransactionController extends Controller
 {
-    public function __construct(protected PaymentCompletionService $completion) {}
+    public function __construct(
+        protected PaymentCompletionService $completion,
+        protected PaymentManager $payments,
+    ) {}
 
     public function index(Request $request): View
     {
@@ -24,7 +28,13 @@ class TransactionController extends Controller
             ->paginate(25)
             ->withQueryString();
 
-        return view('transactions.index', compact('transactions'));
+        $methodOptions = array_merge([
+            'manual' => ['label' => 'Manual (Legacy)'],
+            'moota' => ['label' => 'Moota (Legacy)'],
+            'doku' => ['label' => 'DOKU (Legacy)'],
+        ], $this->payments->optionCatalog());
+
+        return view('transactions.index', compact('transactions', 'methodOptions'));
     }
 
     /**

@@ -128,7 +128,7 @@ class DokuGateway implements PaymentGatewayInterface
 
     public function getSupportedMethods(): array
     {
-        return ['qris', 'va_bca', 'va_bri', 'va_mandiri', 'va_bni', 'credit_card'];
+        return ['doku_qris', 'doku_va_bca', 'doku_va_bri', 'doku_va_mandiri', 'doku_va_bni', 'doku_credit_card'];
     }
 
     public function getConfigFields(): array

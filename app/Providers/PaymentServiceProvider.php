@@ -27,7 +27,12 @@ class PaymentServiceProvider extends ServiceProvider
             'bank_holder'  => \App\Models\Setting::get('moota_bank_holder', config('threfnet.moota.bank_holder')),
         ]));
 
-        $this->app->bind('gateway.manual', fn () => new ManualGateway());
+        $this->app->bind('gateway.manual', fn () => new ManualGateway([
+            'bank_info' => \App\Models\Setting::get('manual_bank_info', config('threfnet.payments.manual.bank_info')),
+            'qris_image_url' => \App\Models\Setting::get('manual_qris_image_url', config('threfnet.payments.manual.qris_image_url')),
+            'qris_note' => \App\Models\Setting::get('manual_qris_note', config('threfnet.payments.manual.qris_note')),
+            'cash_note' => \App\Models\Setting::get('manual_cash_note', config('threfnet.payments.manual.cash_note')),
+        ]));
 
         // --- Payment manager (factory) ---
         $this->app->singleton(PaymentManager::class, fn ($app) => new PaymentManager($app));

@@ -66,7 +66,7 @@ class MootaGateway implements PaymentGatewayInterface
             $amount = (int) round((float) ($mutation['amount'] ?? 0));
 
             $trx = Transaction::query()
-                ->where('payment_method', 'moota')
+                ->whereIn('payment_method', ['moota', 'moota_bank_transfer'])
                 ->where('status', 'pending')
                 ->where('amount_final', $amount)
                 ->latest()
@@ -95,7 +95,7 @@ class MootaGateway implements PaymentGatewayInterface
 
     public function getSupportedMethods(): array
     {
-        return ['bank_transfer'];
+        return ['moota_bank_transfer'];
     }
 
     public function getConfigFields(): array

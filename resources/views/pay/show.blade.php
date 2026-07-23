@@ -22,13 +22,42 @@
             </tr>
         </table>
 
-        <div class="small text-muted mb-3">
-            Metode pembayaran: {{ implode(', ', array_map('strtoupper', $methods)) }}
-        </div>
-
         <form method="POST" action="{{ url("/bayar/{$customer->username}") }}">
             @csrf
-            <button class="btn btn-primary w-100">Bayar Sekarang</button>
+
+            <div class="mb-3">
+                <div class="fw-semibold mb-2">Pilih Metode Pembayaran</div>
+                <div class="d-grid gap-2">
+                    @foreach($options as $option)
+                        @php
+                            $checked = old('option', $recommendedOption['code'] ?? null) === $option['code'];
+                        @endphp
+                        <label class="border rounded-3 p-3 {{ $option['ready'] ? '' : 'bg-light text-muted' }}">
+                            <div class="d-flex align-items-start gap-2">
+                                <input type="radio" name="option" value="{{ $option['code'] }}"
+                                       class="form-check-input mt-1"
+                                       @checked($checked)
+                                       @disabled(! $option['ready'])>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <span class="fw-semibold">{{ $option['label'] }}</span>
+                                        <span class="badge text-bg-{{ $option['ready'] ? 'success' : 'secondary' }}">
+                                            {{ $option['status_label'] }}
+                                        </span>
+                                    </div>
+                                    <div class="small">{{ $option['description'] }}</div>
+                                    <div class="small text-muted mt-1">{{ $option['group'] }}</div>
+                                </div>
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+                @error('option')
+                    <div class="text-danger small mt-2">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <button class="btn btn-primary w-100">Lanjutkan Pembayaran</button>
         </form>
 
         @if($pending)

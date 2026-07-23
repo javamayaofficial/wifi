@@ -14,22 +14,28 @@ class TransactionService
      * Buat transaksi pending untuk pelanggan sesuai driver aktif.
      * Untuk Moota, amount_final = amount + kode unik 3 digit (untuk pencocokan mutasi).
      */
-    public function createFor(Customer $customer): Transaction
+    public function createFor(Customer $customer, ?string $driver = null, ?string $paymentMethod = null): Transaction
     {
-        $driver = $this->payments->activeDriverName();
+        $driver ??= $this->payments->activeDriverName();
         $amount = (float) $customer->plan->price;
 
         $amountFinal = $driver === 'moota'
             ? $amount + $this->uniqueCodeFor($customer, $amount)
             : $amount;
 
+        $selectedMethod = $paymentMethod ?? $driver;
+
         return Transaction::create([
             'order_id'       => $this->generateOrderId(),
             'customer_id'    => $customer->id,
             'amount'         => $amount,
             'amount_final'   => $amountFinal,
-            'payment_method' => $driver,
+            'payment_method' => $selectedMethod,
             'status'         => 'pending',
+            'raw_response'   => [
+                'driver' => $driver,
+                'selected_method' => $selectedMethod,
+            ],
         ]);
     }
 
@@ -45,7 +51,7 @@ class TransactionService
     protected function uniqueCodeFor(Customer $customer, float $amount): int
     {
         $taken = Transaction::query()
-            ->where('payment_method', 'moota')
+            ->whereIn('payment_method', ['moota', 'moota_bank_transfer'])
             ->where('status', 'pending')
             ->where('amount', $amount)
             ->pluck('amount_final')

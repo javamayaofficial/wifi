@@ -22,7 +22,7 @@
         <table class="table table-sm text-start mt-3">
             <tr><td class="text-muted">Order ID</td><td class="text-end"><code>{{ $transaction->order_id }}</code></td></tr>
             <tr><td class="text-muted">Nominal</td><td class="text-end">Rp {{ number_format($transaction->amount_final, 0, ',', '.') }}</td></tr>
-            <tr><td class="text-muted">Metode</td><td class="text-end">{{ strtoupper($transaction->payment_method) }}</td></tr>
+            <tr><td class="text-muted">Metode</td><td class="text-end">{{ $paymentLabel }}</td></tr>
             <tr><td class="text-muted">Status</td><td class="text-end">{{ $transaction->status }}</td></tr>
         </table>
 
