@@ -21,7 +21,10 @@ class MapController extends Controller
                 'username' => $c->username,
                 'plan'     => $c->plan?->name,
                 'status'   => $c->status,
+                'address'  => $c->address,
                 'odp'      => $c->odp_name,
+                'identity_card' => $c->hasIdentityCard(),
+                'profile_complete' => $c->profileIsComplete(),
                 'lat'      => (float) $c->latitude,
                 'lng'      => (float) $c->longitude,
             ]);

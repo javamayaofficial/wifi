@@ -16,9 +16,9 @@ class Customer extends Model
     protected $fillable = [
         'name', 'username', 'password', 'plan_id', 'router_id',
         'expired_date', 'status', 'phone', 'email', 'unique_code',
-        'address', 'latitude', 'longitude', 'odp_name', 'odp_port',
+        'address', 'national_id_number', 'latitude', 'longitude', 'odp_name', 'odp_port',
         'device_type', 'device_serial', 'installation_photo', 'installed_at',
-        'portal_password', 'reseller_id',
+        'identity_card_path', 'profile_completed_at', 'portal_password', 'reseller_id',
     ];
 
     /** PPPoE password terenkripsi (reversible) supaya bisa dipush ke MikroTik. */
@@ -31,6 +31,7 @@ class Customer extends Model
             'installed_at'    => 'date',
             'latitude'        => 'decimal:7',
             'longitude'       => 'decimal:7',
+            'profile_completed_at' => 'datetime',
             'portal_password' => 'hashed',
             'unique_code'  => 'integer',
         ];
@@ -71,6 +72,20 @@ class Customer extends Model
     public function hasCoordinates(): bool
     {
         return $this->latitude !== null && $this->longitude !== null;
+    }
+
+    public function hasIdentityCard(): bool
+    {
+        return filled($this->identity_card_path);
+    }
+
+    public function profileIsComplete(): bool
+    {
+        return filled($this->name)
+            && filled($this->address)
+            && filled($this->national_id_number)
+            && $this->hasIdentityCard()
+            && $this->hasCoordinates();
     }
 
     public function auditLabel(): string

@@ -2,7 +2,7 @@
 @section('title', $customer->exists ? 'Edit Pelanggan' : 'Tambah Pelanggan')
 
 @section('content')
-<form method="POST" action="{{ $customer->exists ? url("/customers/{$customer->id}") : url('/customers') }}">
+<form method="POST" action="{{ $customer->exists ? url("/customers/{$customer->id}") : url('/customers') }}" enctype="multipart/form-data">
     @csrf
     @if($customer->exists) @method('PUT') @endif
 
@@ -61,6 +61,21 @@
                 <div class="col-md-6">
                     <label class="form-label">Email</label>
                     <input type="email" name="email" class="form-control" value="{{ old('email', $customer->email) }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nomor KTP</label>
+                    <input type="text" name="national_id_number" class="form-control"
+                           value="{{ old('national_id_number', $customer->national_id_number) }}" placeholder="16 digit nomor KTP">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Upload Foto KTP</label>
+                    <input type="file" name="identity_card" class="form-control" accept="image/*">
+                    @if($customer->identity_card_path)
+                        <div class="form-text">
+                            File tersimpan:
+                            <a href="{{ asset('storage/' . $customer->identity_card_path) }}" target="_blank">lihat foto KTP</a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

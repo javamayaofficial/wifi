@@ -66,7 +66,10 @@ pelanggan.forEach(function (p) {
         '<b>' + p.name + '</b><br>' +
         '<code>' + p.username + '</code><br>' +
         'Paket: ' + (p.plan || '-') + '<br>' +
+        'Alamat: ' + (p.address || '-') + '<br>' +
         'ODP: ' + (p.odp || '-') + '<br>' +
+        'KTP: ' + (p.identity_card ? 'sudah diunggah' : 'belum ada') + '<br>' +
+        'Profil: ' + (p.profile_complete ? 'lengkap' : 'perlu dilengkapi') + '<br>' +
         'Status: ' + p.status
     );
 

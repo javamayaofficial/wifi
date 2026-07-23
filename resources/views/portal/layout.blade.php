@@ -30,6 +30,7 @@
         @if($c)
             <nav class="pub-nav d-flex align-items-center gap-3 ms-auto">
                 <a href="{{ url('/portal') }}" class="{{ request()->is('portal') ? 'on' : '' }}">Beranda</a>
+                <a href="{{ url('/portal/profile') }}" class="{{ request()->is('portal/profile') ? 'on' : '' }}">Profil</a>
                 <a href="{{ url('/portal/invoices') }}" class="{{ request()->is('portal/invoices') ? 'on' : '' }}">Tagihan</a>
                 <a href="{{ url('/portal/tickets') }}" class="{{ request()->is('portal/tickets') ? 'on' : '' }}">Laporan</a>
                 <form method="POST" action="{{ url('/portal/logout') }}">

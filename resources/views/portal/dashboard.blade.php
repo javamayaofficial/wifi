@@ -4,6 +4,16 @@
 @section('content')
 <h5 class="mb-3">Halo, {{ $customer->name }}</h5>
 
+@unless($profileComplete)
+    <div class="alert alert-warning border-0 shadow-sm">
+        <div class="fw-semibold mb-1">Lengkapi profil pelanggan dulu</div>
+        <div class="small mb-3">
+            Mohon isi nama, alamat, nomor KTP, unggah foto KTP, dan titik lokasi pemasangan. Data ini akan dipakai sebagai acuan peta titik pelanggan yang sudah terpasang.
+        </div>
+        <a href="{{ url('/portal/profile') }}" class="btn btn-sm btn-dark">Lengkapi Profil</a>
+    </div>
+@endunless
+
 <div class="row g-3 mb-4">
     <div class="col-md-6">
         <div class="card shadow-sm border-0 h-100">

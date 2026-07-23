@@ -48,6 +48,8 @@ Route::post('/portal/logout', [PortalAuthController::class, 'logout']);
 
 Route::middleware('portal')->group(function () {
     Route::get('/portal', [PortalController::class, 'dashboard']);
+    Route::get('/portal/profile', [PortalController::class, 'profile']);
+    Route::post('/portal/profile', [PortalController::class, 'updateProfile']);
     Route::get('/portal/invoices', [PortalController::class, 'invoices']);
     Route::get('/portal/tickets', [PortalController::class, 'tickets']);
     Route::post('/portal/tickets', [PortalController::class, 'storeTicket']);

@@ -11,6 +11,7 @@ use App\Jobs\SendWhatsAppNotification;
 use App\Services\Mikrotik\MikrotikService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -64,6 +65,10 @@ class CustomerController extends Controller
         // Password kosong = tidak diubah.
         if (blank($data['password'] ?? null)) {
             unset($data['password']);
+        }
+
+        if (blank($data['identity_card_path'] ?? null)) {
+            unset($data['identity_card_path']);
         }
 
         $customer->update($data);
@@ -143,7 +148,11 @@ class CustomerController extends Controller
 
     protected function validated(Request $request, ?int $ignoreId = null): array
     {
-        return $request->validate([
+        $request->merge([
+            'national_id_number' => preg_replace('/\D+/', '', (string) $request->input('national_id_number')),
+        ]);
+
+        $data = $request->validate([
             'name'         => ['required', 'string', 'max:150'],
             'username'     => ['required', 'string', 'max:100', Rule::unique('thre_customers', 'username')->ignore($ignoreId)],
             'password'     => [$ignoreId ? 'nullable' : 'required', 'string', 'max:100'],
@@ -154,14 +163,43 @@ class CustomerController extends Controller
             'phone'        => ['nullable', 'string', 'max:20'],
             'email'        => ['nullable', 'email', 'max:150'],
             'address'       => ['nullable', 'string'],
+            'national_id_number' => ['nullable', 'digits_between:12,20'],
             'latitude'      => ['nullable', 'numeric', 'between:-90,90'],
             'longitude'     => ['nullable', 'numeric', 'between:-180,180'],
             'odp_name'      => ['nullable', 'string', 'max:100'],
             'odp_port'      => ['nullable', 'string', 'max:50'],
             'device_type'   => ['nullable', 'string', 'max:100'],
             'device_serial' => ['nullable', 'string', 'max:100'],
+            'identity_card' => ['nullable', 'image', 'max:4096'],
             'installed_at'  => ['nullable', 'date'],
             'reseller_id'   => ['nullable', 'exists:thre_resellers,id'],
         ]);
+
+        $customer = $ignoreId ? Customer::find($ignoreId) : null;
+
+        if ($request->hasFile('identity_card')) {
+            if ($customer?->identity_card_path) {
+                Storage::disk('public')->delete($customer->identity_card_path);
+            }
+
+            $data['identity_card_path'] = $request->file('identity_card')->store('customer-identity-cards', 'public');
+        }
+
+        unset($data['identity_card']);
+
+        if (
+            filled($data['name'] ?? null)
+            && filled($data['address'] ?? null)
+            && filled($data['national_id_number'] ?? null)
+            && filled($data['latitude'] ?? null)
+            && filled($data['longitude'] ?? null)
+            && filled($data['identity_card_path'] ?? $customer?->identity_card_path)
+        ) {
+            $data['profile_completed_at'] = now();
+        } else {
+            $data['profile_completed_at'] = null;
+        }
+
+        return $data;
     }
 }
