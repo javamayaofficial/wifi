@@ -74,10 +74,10 @@
             <hr class="my-4">
 
             <div>
-                <div class="small text-uppercase fw-semibold mb-2" style="letter-spacing:.08em;color:#7A8CA5">Masuk dengan OTP WhatsApp</div>
-                <p class="small mb-3" style="color:#7A8CA5">Masukkan nomor WhatsApp admin yang terdaftar, lalu verifikasi kode OTP 6 digit yang dikirim ke WA Anda.</p>
+                <div class="small text-uppercase fw-semibold mb-2" style="letter-spacing:.08em;color:#7A8CA5">Masuk via WhatsApp</div>
+                <p class="small mb-3" style="color:#7A8CA5">Masukkan nomor WhatsApp admin, kirim OTP, lalu isi kode 6 digit untuk masuk.</p>
 
-                <form method="POST" action="{{ route('signin.otp.request') }}" class="mb-3">
+                <form method="POST">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label">Nomor WhatsApp</label>
@@ -86,17 +86,11 @@
                             <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
                     </div>
-                    <button class="btn btn-outline-primary w-100">Kirim OTP ke WhatsApp</button>
-                </form>
-
-                <form method="POST" action="{{ route('signin.otp.verify') }}">
-                    @csrf
                     <div class="mb-3">
-                        <label class="form-label">Nomor WhatsApp</label>
-                        <input type="text" name="otp_phone" class="form-control" value="{{ old('otp_phone') }}" placeholder="08xxxxxxxxxx" autocomplete="tel" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Kode OTP</label>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="form-label mb-0">Kode OTP</label>
+                            <button class="btn btn-link btn-sm p-0 text-decoration-none" formaction="{{ route('signin.otp.request') }}">Kirim OTP</button>
+                        </div>
                         <input type="text" name="otp_code" class="form-control" inputmode="numeric" maxlength="6" placeholder="6 digit OTP" required>
                         @error('otp_code')
                             <div class="text-danger small mt-1">{{ $message }}</div>
@@ -106,7 +100,7 @@
                         <input type="checkbox" name="otp_remember" value="1" class="form-check-input" id="otpRemember">
                         <label class="form-check-label small" for="otpRemember">Ingat sesi perangkat ini</label>
                     </div>
-                    <button class="btn btn-dark w-100">Verifikasi OTP & Masuk</button>
+                    <button class="btn btn-dark w-100" formaction="{{ route('signin.otp.verify') }}">Masuk via OTP WhatsApp</button>
                 </form>
             </div>
         </div>
