@@ -48,7 +48,7 @@ class NotificationSettingController extends Controller
     {
         $request->validate([
             'whatsapp_provider'     => ['nullable', 'in:gateway,fonnte'],
-            'whatsapp_country_code' => ['nullable', 'string', 'max:10'],
+            'whatsapp_country_code' => ['nullable', 'in:62,0'],
         ]);
 
         foreach ([
