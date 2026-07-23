@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
 
 class Setting extends Model
 {
+    use LogsActivity;
+
     protected $table = 'thre_settings';
 
     protected $fillable = ['key', 'value'];
@@ -16,7 +19,7 @@ class Setting extends Model
     /** Key yang nilainya sensitif → dienkripsi saat disimpan. */
     protected static array $sensitiveKeys = [
         'doku_secret_key', 'moota_secret_token',
-        'mailketing_api_token', 'whatsapp_api_key',
+        'mailketing_api_token', 'whatsapp_api_key', 'telegram_bot_token',
     ];
 
     public static function get(string $key, $default = null)

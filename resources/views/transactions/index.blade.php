@@ -43,7 +43,10 @@
                         </span>
                     </td>
                     <td class="small">{{ $t->paid_at?->format('d/m/Y H:i') ?? '-' }}</td>
-                    <td class="text-end">
+                    <td class="text-end text-nowrap">
+                        <a href="{{ url("/transactions/{$t->id}/invoice") }}" class="btn btn-sm btn-outline-secondary">
+                            PDF
+                        </a>
                         @if($t->status === 'pending')
                             <form method="POST" action="{{ url("/transactions/{$t->id}/activate") }}" class="d-inline"
                                   onsubmit="return confirm('Konfirmasi pembayaran ini dan aktifkan internet pelanggan?')">

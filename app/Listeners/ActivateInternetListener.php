@@ -47,7 +47,7 @@ class ActivateInternetListener implements ShouldQueue
             . "<p>Berlaku hingga: <b>" . $customer->expired_date->translatedFormat('d F Y') . "</b></p>"
         );
 
-        SendWhatsAppNotification::dispatch($customer, $waMessage);
-        SendEmailNotification::dispatch($customer, 'THRE.F.NET - Pembayaran Diterima', $emailHtml);
+        SendWhatsAppNotification::dispatch($customer, $waMessage, 'payment_success');
+        SendEmailNotification::dispatch($customer, 'THRE.F.NET - Pembayaran Diterima', $emailHtml, 'payment_success');
     }
 }

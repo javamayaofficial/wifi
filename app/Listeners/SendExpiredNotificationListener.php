@@ -34,7 +34,7 @@ class SendExpiredNotificationListener implements ShouldQueue
             . "<p>Silakan lakukan pembayaran agar layanan aktif kembali secara otomatis.</p>"
         );
 
-        SendWhatsAppNotification::dispatch($customer, $waMessage);
-        SendEmailNotification::dispatch($customer, 'THRE.F.NET - Internet Terisolir', $emailHtml);
+        SendWhatsAppNotification::dispatch($customer, $waMessage, 'isolir');
+        SendEmailNotification::dispatch($customer, 'THRE.F.NET - Internet Terisolir', $emailHtml, 'isolir');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Services\Notifications\MailketingService;
+use App\Services\Notifications\TelegramService;
 use App\Services\Notifications\WhatsAppGatewayService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ class NotificationSettingController extends Controller
             'mailketing_api_token' => Setting::get('mailketing_api_token'),
             'mailketing_from_name' => Setting::get('mailketing_from_name', config('threfnet.mailketing.from_name')),
             'mailketing_from_email'=> Setting::get('mailketing_from_email', config('threfnet.mailketing.from_email')),
+            'telegram_bot_token'   => Setting::get('telegram_bot_token'),
+            'telegram_chat_id'     => Setting::get('telegram_chat_id'),
         ];
 
         return view('settings.notification', compact('values'));
@@ -30,6 +33,7 @@ class NotificationSettingController extends Controller
         foreach ([
             'whatsapp_gateway_url', 'whatsapp_api_key',
             'mailketing_api_token', 'mailketing_from_name', 'mailketing_from_email',
+            'telegram_bot_token', 'telegram_chat_id',
         ] as $key) {
             if ($request->filled($key)) {
                 Setting::put($key, $request->input($key));
@@ -40,14 +44,16 @@ class NotificationSettingController extends Controller
     }
 
     /** Tombol "Test": kirim WA + Email percobaan. */
-    public function test(Request $request, WhatsAppGatewayService $wa, MailketingService $mail): RedirectResponse
+    public function test(Request $request, WhatsAppGatewayService $wa, MailketingService $mail, TelegramService $tg): RedirectResponse
     {
         $data = $request->validate([
-            'channel' => ['required', 'in:whatsapp,email'],
-            'target'  => ['required', 'string'],
+            'channel' => ['required', 'in:whatsapp,email,telegram'],
+            'target'  => ['nullable', 'string'],
         ]);
 
-        if ($data['channel'] === 'whatsapp') {
+        if ($data['channel'] === 'telegram') {
+            $res = $tg->send('Tes alert THRE.F.NET Billing System. Abaikan pesan ini.');
+        } elseif ($data['channel'] === 'whatsapp') {
             $res = $wa->send($data['target'], 'Tes notifikasi THRE.F.NET Billing System. Abaikan pesan ini.');
         } else {
             $html = MailketingService::template('Tes Notifikasi', '<p>Ini email percobaan dari THRE.F.NET Billing System.</p>');

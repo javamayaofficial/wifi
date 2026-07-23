@@ -10,7 +10,7 @@ class NotificationLog extends Model
     protected $table = 'thre_notifications_log';
 
     protected $fillable = [
-        'customer_id', 'type', 'channel', 'status', 'sent_at', 'error',
+        'customer_id', 'type', 'channel', 'context', 'status', 'sent_at', 'error',
     ];
 
     protected function casts(): array

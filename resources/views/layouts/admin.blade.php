@@ -18,8 +18,34 @@
                 <li class="nav-item"><a class="nav-link" href="{{ url('/dashboard') }}">Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url('/customers') }}">Pelanggan</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url('/plans') }}">Paket</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/routers') }}">Router</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/transactions') }}">Transaksi</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url('/tickets') }}">Tiket</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Jaringan</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url('/mikrotik/monitor') }}">Monitoring</a></li>
+                        <li><a class="dropdown-item" href="{{ url('/map') }}">Peta Pelanggan</a></li>
+                        <li><a class="dropdown-item" href="{{ url('/routers') }}">Router</a></li>
+                        <li><a class="dropdown-item" href="{{ url('/inventory') }}">Inventory</a></li>
+                        <li><a class="dropdown-item" href="{{ url('/vouchers') }}">Voucher Hotspot</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Laporan</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url('/transactions') }}">Transaksi</a></li>
+                        <li><a class="dropdown-item" href="{{ url('/reports/arrears') }}">Tunggakan</a></li>
+                        <li><a class="dropdown-item" href="{{ url('/reports/vouchers') }}">Penjualan Voucher</a></li>
+                        @if(auth()->user()?->hasRole('owner','admin'))
+                            <li><a class="dropdown-item" href="{{ url('/expenses') }}">Pengeluaran</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/reports/profit-loss') }}">Laba Rugi</a></li>
+                            <li><a class="dropdown-item" href="{{ url('/resellers') }}">Mitra / Reseller</a></li>
+                        @endif
+                        @if(auth()->user()?->isOwner())
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url('/audit') }}">Audit Log</a></li>
+                        @endif
+                    </ul>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{{ url('/settings/payment') }}">Pembayaran</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url('/settings/notification') }}">Notifikasi</a></li>
                 <li class="nav-item">

@@ -7,6 +7,7 @@ use App\Imports\CustomersImport;
 use App\Models\Customer;
 use App\Models\Plan;
 use App\Models\Router;
+use App\Jobs\SendWhatsAppNotification;
 use App\Services\Mikrotik\MikrotikService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -99,6 +100,29 @@ class CustomerController extends Controller
         }
     }
 
+    /** Buat/reset password portal pelanggan lalu kirim via WhatsApp. */
+    public function resetPortalPassword(Customer $customer): RedirectResponse
+    {
+        $plain = 'thre' . random_int(100000, 999999);
+
+        $customer->update(['portal_password' => $plain]);   // di-hash oleh cast
+
+        if ($customer->phone) {
+            SendWhatsAppNotification::dispatch(
+                $customer,
+                "[THRE.F.NET - Akun Portal]\n"
+                . "Halo {$customer->name}, berikut akses portal pelanggan Anda:\n"
+                . "Username: {$customer->username}\n"
+                . "Password: {$plain}\n"
+                . config('app.url') . "/portal/login\n"
+                . 'Mohon jangan bagikan password ini kepada siapa pun.',
+                'portal_password'
+            );
+        }
+
+        return back()->with('success', "Password portal dibuat: {$plain} (dikirim via WhatsApp bila nomor tersedia).");
+    }
+
     public function importForm(): View
     {
         return view('customers.import');
@@ -132,6 +156,15 @@ class CustomerController extends Controller
             'status'       => ['required', 'in:new,active,isolated,suspended'],
             'phone'        => ['nullable', 'string', 'max:20'],
             'email'        => ['nullable', 'email', 'max:150'],
+            'address'       => ['nullable', 'string'],
+            'latitude'      => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude'     => ['nullable', 'numeric', 'between:-180,180'],
+            'odp_name'      => ['nullable', 'string', 'max:100'],
+            'odp_port'      => ['nullable', 'string', 'max:50'],
+            'device_type'   => ['nullable', 'string', 'max:100'],
+            'device_serial' => ['nullable', 'string', 'max:100'],
+            'installed_at'  => ['nullable', 'date'],
+            'reseller_id'   => ['nullable', 'exists:thre_resellers,id'],
         ]);
     }
 }

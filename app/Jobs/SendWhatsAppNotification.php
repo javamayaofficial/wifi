@@ -20,6 +20,7 @@ class SendWhatsAppNotification implements ShouldQueue
     public function __construct(
         public Customer $customer,
         public string $message,
+        public ?string $context = null,
     ) {}
 
     public function handle(NotificationManager $notifications): void
@@ -27,6 +28,6 @@ class SendWhatsAppNotification implements ShouldQueue
         if (! $this->customer->phone) {
             return;
         }
-        $notifications->sendWhatsApp($this->customer->phone, $this->message, $this->customer);
+        $notifications->sendWhatsApp($this->customer->phone, $this->message, $this->customer, $this->context);
     }
 }

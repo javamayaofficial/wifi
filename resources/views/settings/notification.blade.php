@@ -43,6 +43,25 @@
         </div>
     </div>
 
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
+            <h6 class="fw-bold mb-1">Telegram — Alert Internal</h6>
+            <p class="text-muted small">
+                Untuk alert ke Anda sendiri (router down, backup gagal), bukan ke pelanggan.
+            </p>
+            <div class="mb-3">
+                <label class="form-label">Bot Token</label>
+                <input type="password" name="telegram_bot_token" class="form-control"
+                       placeholder="{{ ($values['telegram_bot_token'] ?? false) ? '•••• (tersimpan)' : 'dari @BotFather' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Chat ID</label>
+                <input type="text" name="telegram_chat_id" class="form-control"
+                       value="{{ $values['telegram_chat_id'] ?? '' }}" placeholder="ID grup atau chat pribadi">
+            </div>
+        </div>
+    </div>
+
     <button class="btn btn-primary">Simpan</button>
 </form>
 
@@ -56,11 +75,12 @@
                 <select name="channel" class="form-select">
                     <option value="whatsapp">WhatsApp</option>
                     <option value="email">Email</option>
+                    <option value="telegram">Telegram (alert internal)</option>
                 </select>
             </div>
             <div class="col-auto">
                 <label class="form-label">Tujuan (no. HP / email)</label>
-                <input type="text" name="target" class="form-control" required>
+                <input type="text" name="target" class="form-control" placeholder="kosongkan untuk Telegram">
             </div>
             <div class="col-auto">
                 <button class="btn btn-outline-primary">Kirim Tes</button>

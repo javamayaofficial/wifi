@@ -5,6 +5,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0">Pelanggan THRE.F.NET</h4>
     <div>
+        <a href="{{ url('/mikrotik/import') }}" class="btn btn-outline-primary btn-sm">Import dari Router</a>
         <a href="{{ url('/customers/import') }}" class="btn btn-outline-secondary btn-sm">Import Excel</a>
         <a href="{{ url('/customers/create') }}" class="btn btn-primary btn-sm">+ Tambah</a>
     </div>
@@ -55,6 +56,11 @@
                         <span class="badge bg-{{ $c->status === 'active' ? 'success' : ($c->status === 'isolated' ? 'danger' : 'secondary') }}">
                             {{ $c->status }}
                         </span>
+                        @if($c->sync_error)
+                            <div class="small text-danger" title="{{ $c->sync_error }}">sync gagal</div>
+                        @elseif(! $c->synced_at)
+                            <div class="small text-muted">belum tersinkron</div>
+                        @endif
                     </td>
                     <td class="text-end text-nowrap">
                         <a href="{{ url("/customers/{$c->id}/edit") }}" class="btn btn-sm btn-outline-secondary">Edit</a>
@@ -63,6 +69,11 @@
                             <button class="btn btn-sm btn-outline-{{ $c->status === 'active' ? 'danger' : 'success' }}">
                                 {{ $c->status === 'active' ? 'Isolir' : 'Aktifkan' }}
                             </button>
+                        </form>
+                        <form method="POST" action="{{ url("/customers/{$c->id}/portal-password") }}" class="d-inline"
+                              onsubmit="return confirm('Buat/reset password portal untuk pelanggan ini?')">
+                            @csrf
+                            <button class="btn btn-sm btn-outline-primary" title="Buat password portal pelanggan">Portal</button>
                         </form>
                         <form method="POST" action="{{ url("/customers/{$c->id}") }}" class="d-inline"
                               onsubmit="return confirm('Hapus pelanggan ini?')">

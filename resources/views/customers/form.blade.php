@@ -68,6 +68,63 @@
         </div>
     </div>
 
+    <div class="card shadow-sm border-0 mt-3" style="max-width:720px">
+        <div class="card-body">
+            <h6 class="fw-bold mb-3">Data Teknis & Lokasi</h6>
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label">Alamat</label>
+                    <textarea name="address" class="form-control" rows="2">{{ old('address', $customer->address) }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Latitude</label>
+                    <input type="text" name="latitude" class="form-control"
+                           value="{{ old('latitude', $customer->latitude) }}" placeholder="-6.4025">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Longitude</label>
+                    <input type="text" name="longitude" class="form-control"
+                           value="{{ old('longitude', $customer->longitude) }}" placeholder="106.7942">
+                    <div class="form-text">Salin dari Google Maps: klik kanan lokasi &rarr; koordinat.</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Nama ODP / ODC</label>
+                    <input type="text" name="odp_name" class="form-control" value="{{ old('odp_name', $customer->odp_name) }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Port ODP</label>
+                    <input type="text" name="odp_port" class="form-control" value="{{ old('odp_port', $customer->odp_port) }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Jenis Perangkat</label>
+                    <input type="text" name="device_type" class="form-control"
+                           value="{{ old('device_type', $customer->device_type) }}" placeholder="mis. ONU ZTE F609">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Serial Perangkat</label>
+                    <input type="text" name="device_serial" class="form-control"
+                           value="{{ old('device_serial', $customer->device_serial) }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tanggal Pemasangan</label>
+                    <input type="date" name="installed_at" class="form-control"
+                           value="{{ old('installed_at', $customer->installed_at?->format('Y-m-d')) }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mitra / Reseller</label>
+                    <select name="reseller_id" class="form-select">
+                        <option value="">— Tidak ada —</option>
+                        @foreach(\App\Models\Reseller::orderBy('name')->get() as $r)
+                            <option value="{{ $r->id }}" @selected(old('reseller_id', $customer->reseller_id) == $r->id)>
+                                {{ $r->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="mt-3">
         <button class="btn btn-primary">Simpan</button>
         <a href="{{ url('/customers') }}" class="btn btn-link">Batal</a>

@@ -19,17 +19,17 @@ class NotificationManager implements NotificationServiceInterface
         protected MailketingService $mail,
     ) {}
 
-    public function sendWhatsApp(string $phone, string $message, ?Customer $customer = null): bool
+    public function sendWhatsApp(string $phone, string $message, ?Customer $customer = null, ?string $context = null): bool
     {
         $result = $this->whatsapp->send($phone, $message);
-        $this->log($customer, 'whatsapp', 'gateway', $result);
+        $this->log($customer, 'whatsapp', 'gateway', $result, $context);
         return (bool) ($result['ok'] ?? false);
     }
 
-    public function sendEmail(string $to, string $subject, string $htmlContent, ?Customer $customer = null): bool
+    public function sendEmail(string $to, string $subject, string $htmlContent, ?Customer $customer = null, ?string $context = null): bool
     {
         $result = $this->mail->send($to, $subject, $htmlContent);
-        $this->log($customer, 'email', 'mailketing', $result);
+        $this->log($customer, 'email', 'mailketing', $result, $context);
         return (bool) ($result['ok'] ?? false);
     }
 
@@ -44,12 +44,13 @@ class NotificationManager implements NotificationServiceInterface
         }
     }
 
-    protected function log(?Customer $customer, string $type, string $channel, array $result): void
+    protected function log(?Customer $customer, string $type, string $channel, array $result, ?string $context = null): void
     {
         NotificationLog::create([
             'customer_id' => $customer?->id,
             'type'        => $type,
             'channel'     => $channel,
+            'context'     => $context,
             'status'      => ($result['ok'] ?? false) ? 'sent' : 'failed',
             'sent_at'     => now(),
             'error'       => $result['error'] ?? null,

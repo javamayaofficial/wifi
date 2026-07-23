@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Plan extends Model
 {
+    use LogsActivity;
+
     protected $table = 'thre_plans';
 
     protected $fillable = [

@@ -21,6 +21,7 @@ class SendEmailNotification implements ShouldQueue
         public Customer $customer,
         public string $subject,
         public string $htmlContent,
+        public ?string $context = null,
     ) {}
 
     public function handle(NotificationManager $notifications): void
@@ -28,6 +29,6 @@ class SendEmailNotification implements ShouldQueue
         if (! $this->customer->email) {
             return;
         }
-        $notifications->sendEmail($this->customer->email, $this->subject, $this->htmlContent, $this->customer);
+        $notifications->sendEmail($this->customer->email, $this->subject, $this->htmlContent, $this->customer, $this->context);
     }
 }
