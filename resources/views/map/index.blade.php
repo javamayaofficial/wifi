@@ -21,6 +21,22 @@
     <div class="col-lg-3">
         <div class="card shadow-sm border-0">
             <div class="card-body">
+                <h6 class="fw-bold mb-3">Daftar Titik Pelanggan</h6>
+                <div class="small text-muted mb-3">
+                    Menampilkan nama pelanggan, ID pelanggan sistem, dan ID MikroTik/PPPoE yang dipakai di router.
+                </div>
+                <div class="vstack gap-2 mb-4" style="max-height:280px; overflow:auto">
+                    @forelse($customers as $c)
+                        <button type="button" class="btn btn-outline-secondary btn-sm text-start map-jump"
+                                data-lat="{{ $c['lat'] }}" data-lng="{{ $c['lng'] }}">
+                            <div class="fw-semibold">{{ $c['name'] }}</div>
+                            <div class="small text-muted">#{{ $c['id'] }} · MikroTik {{ $c['username'] }}</div>
+                        </button>
+                    @empty
+                        <p class="text-muted small mb-0">Belum ada titik pelanggan.</p>
+                    @endforelse
+                </div>
+
                 <h6 class="fw-bold mb-3">Pelanggan per ODP</h6>
                 <p class="small text-muted">
                     Saat satu ODP bermasalah, daftar ini menunjukkan siapa saja yang terdampak.
@@ -64,7 +80,8 @@ pelanggan.forEach(function (p) {
 
     m.bindPopup(
         '<b>' + p.name + '</b><br>' +
-        '<code>' + p.username + '</code><br>' +
+        'ID pelanggan: #' + p.id + '<br>' +
+        'ID MikroTik/PPPoE: <code>' + p.username + '</code><br>' +
         'Paket: ' + (p.plan || '-') + '<br>' +
         'Alamat: ' + (p.address || '-') + '<br>' +
         'ODP: ' + (p.odp || '-') + '<br>' +
@@ -79,5 +96,16 @@ pelanggan.forEach(function (p) {
 if (grup.length) {
     peta.fitBounds(L.featureGroup(grup).getBounds().pad(0.2));
 }
+
+document.querySelectorAll('.map-jump').forEach(function (button) {
+    button.addEventListener('click', function () {
+        const lat = parseFloat(button.dataset.lat);
+        const lng = parseFloat(button.dataset.lng);
+
+        if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+            peta.setView([lat, lng], 18);
+        }
+    });
+});
 </script>
 @endsection

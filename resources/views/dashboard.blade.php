@@ -87,6 +87,16 @@
             </div></div>
         </a>
     </div>
+
+    <div class="col-12 col-xl-3">
+        <a href="{{ url('/map') }}" class="metric">
+            <div class="card h-100"><div class="card-body">
+                <div class="metric-label">Titik Terpetakan</div>
+                <div class="metric-value">{{ number_format($stats['mapped']) }}</div>
+                <div class="metric-note">lengkap dengan nama dan ID MikroTik/PPPoE</div>
+            </div></div>
+        </a>
+    </div>
 </div>
 
 {{-- ============ PANEL BAWAH ============ --}}
@@ -155,6 +165,36 @@
                     <div class="empty-title">Tidak ada gangguan berjalan</div>
                     <div class="empty-text">Semua laporan pelanggan sudah tertangani.</div>
                     <a href="{{ url('/tickets/create') }}" class="btn btn-sm btn-outline-secondary">Buat tiket</a>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                Titik Pelanggan Terpasang
+                <a href="{{ url('/map') }}" class="btn btn-sm btn-outline-secondary">Buka peta</a>
+            </div>
+
+            @forelse($mappedCustomers as $c)
+                <div class="d-flex align-items-center gap-3 px-3 py-2 flex-wrap"
+                     style="border-top:1px solid var(--line-soft)">
+                    <span class="dot {{ $c->status === 'active' ? 'dot-ok' : 'dot-down' }}"></span>
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="fw-semibold text-truncate" style="font-size:.87rem">{{ $c->name }}</div>
+                        <div class="small text-muted text-truncate">
+                            ID pelanggan #{{ $c->id }} · ID MikroTik/PPPoE {{ $c->username }}
+                        </div>
+                    </div>
+                    <div class="small text-muted text-nowrap">
+                        {{ number_format((float) $c->latitude, 5) }}, {{ number_format((float) $c->longitude, 5) }}
+                    </div>
+                </div>
+            @empty
+                <div class="empty">
+                    <div class="empty-title">Belum ada titik pelanggan</div>
+                    <div class="empty-text">Koordinat yang dilengkapi pelanggan atau admin akan muncul di sini.</div>
                 </div>
             @endforelse
         </div>

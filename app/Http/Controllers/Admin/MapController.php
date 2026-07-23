@@ -16,18 +16,19 @@ class MapController extends Controller
             ->whereNotNull('longitude')
             ->get()
             ->map(fn ($c) => [
-                'id'       => $c->id,
-                'name'     => $c->name,
+                'id' => $c->id,
+                'name' => $c->name,
                 'username' => $c->username,
-                'plan'     => $c->plan?->name,
-                'status'   => $c->status,
-                'address'  => $c->address,
-                'odp'      => $c->odp_name,
+                'plan' => $c->plan?->name,
+                'status' => $c->status,
+                'address' => $c->address,
+                'odp' => $c->odp_name,
                 'identity_card' => $c->hasIdentityCard(),
                 'profile_complete' => $c->profileIsComplete(),
-                'lat'      => (float) $c->latitude,
-                'lng'      => (float) $c->longitude,
-            ]);
+                'lat' => (float) $c->latitude,
+                'lng' => (float) $c->longitude,
+            ])
+            ->values();
 
         $tanpaKoordinat = Customer::whereNull('latitude')->count();
 

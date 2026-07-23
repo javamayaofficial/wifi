@@ -24,6 +24,7 @@ class DashboardController extends Controller
             'total'    => Customer::count(),
             'active'   => Customer::where('status', 'active')->count(),
             'inactive' => Customer::whereIn('status', ['isolated', 'suspended', 'new'])->count(),
+            'mapped'   => Customer::whereNotNull('latitude')->whereNotNull('longitude')->count(),
             'revenue'  => Transaction::where('status', 'paid')
                 ->whereMonth('paid_at', now()->month)
                 ->whereYear('paid_at', now()->year)
@@ -116,6 +117,13 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        return view('dashboard', compact('stats', 'triage', 'jatuhTempo', 'lastPayments', 'recentTickets'));
+        $mappedCustomers = Customer::query()
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->latest('profile_completed_at')
+            ->limit(5)
+            ->get(['id', 'name', 'username', 'status', 'latitude', 'longitude']);
+
+        return view('dashboard', compact('stats', 'triage', 'jatuhTempo', 'lastPayments', 'recentTickets', 'mappedCustomers'));
     }
 }

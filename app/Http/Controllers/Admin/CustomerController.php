@@ -139,11 +139,17 @@ class CustomerController extends Controller
         $import = new CustomersImport();
         Excel::import($import, $request->file('file'));
 
+        $mappedColumns = collect($import->detectedColumns)
+            ->map(fn ($field, $index) => 'kolom ' . ($index + 1) . ' -> ' . $field)
+            ->values()
+            ->all();
+
         $msg = "Import selesai: {$import->successCount} berhasil, " . count($import->errors) . ' gagal.';
 
         return redirect('/customers')
             ->with($import->errors ? 'error' : 'success', $msg)
-            ->with('import_errors', $import->errors);
+            ->with('import_errors', $import->errors)
+            ->with('import_detected_columns', $mappedColumns);
     }
 
     protected function validated(Request $request, ?int $ignoreId = null): array

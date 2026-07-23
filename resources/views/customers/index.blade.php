@@ -18,6 +18,13 @@
     </div>
 @endif
 
+@if(session('import_detected_columns'))
+    <div class="alert alert-info">
+        <div class="fw-semibold mb-1">Pemetaan kolom yang terbaca otomatis:</div>
+        <div class="small">{{ implode(' • ', session('import_detected_columns')) }}</div>
+    </div>
+@endif
+
 <form method="GET" class="row g-2 mb-3 page-filters">
     <div class="col-12 col-md">
         <input type="text" name="q" value="{{ request('q') }}" class="form-control form-control-sm" placeholder="Cari nama / username">
