@@ -22,7 +22,7 @@ class NotificationManager implements NotificationServiceInterface
     public function sendWhatsApp(string $phone, string $message, ?Customer $customer = null, ?string $context = null): bool
     {
         $result = $this->whatsapp->send($phone, $message);
-        $this->log($customer, 'whatsapp', 'gateway', $result, $context);
+        $this->log($customer, 'whatsapp', $this->whatsapp->activeChannel(), $result, $context);
         return (bool) ($result['ok'] ?? false);
     }
 

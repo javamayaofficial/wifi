@@ -16,8 +16,12 @@ class NotificationSettingController extends Controller
     public function index(): View
     {
         $values = [
+            'whatsapp_provider'    => Setting::get('whatsapp_provider', config('threfnet.whatsapp.provider', 'gateway')),
             'whatsapp_gateway_url' => Setting::get('whatsapp_gateway_url', config('threfnet.whatsapp.gateway_url')),
             'whatsapp_api_key'     => Setting::get('whatsapp_api_key'),
+            'fonnte_url'           => Setting::get('fonnte_url', config('threfnet.whatsapp.fonnte_url')),
+            'fonnte_token'         => Setting::get('fonnte_token'),
+            'whatsapp_country_code'=> Setting::get('whatsapp_country_code', config('threfnet.whatsapp.country_code', '62')),
             'mailketing_api_token' => Setting::get('mailketing_api_token'),
             'mailketing_from_name' => Setting::get('mailketing_from_name', config('threfnet.mailketing.from_name')),
             'mailketing_from_email'=> Setting::get('mailketing_from_email', config('threfnet.mailketing.from_email')),
@@ -30,14 +34,24 @@ class NotificationSettingController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        $request->validate([
+            'whatsapp_provider'     => ['nullable', 'in:gateway,fonnte'],
+            'whatsapp_country_code' => ['nullable', 'string', 'max:10'],
+        ]);
+
         foreach ([
-            'whatsapp_gateway_url', 'whatsapp_api_key',
+            'whatsapp_provider', 'whatsapp_gateway_url', 'whatsapp_api_key',
+            'fonnte_url', 'fonnte_token', 'whatsapp_country_code',
             'mailketing_api_token', 'mailketing_from_name', 'mailketing_from_email',
             'telegram_bot_token', 'telegram_chat_id',
         ] as $key) {
             if ($request->filled($key)) {
                 Setting::put($key, $request->input($key));
             }
+        }
+
+        if ($request->has('whatsapp_provider')) {
+            Setting::put('whatsapp_provider', $request->input('whatsapp_provider', 'gateway'));
         }
 
         return back()->with('success', 'Pengaturan notifikasi THRE.F.NET tersimpan.');

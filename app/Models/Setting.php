@@ -19,7 +19,7 @@ class Setting extends Model
     /** Key yang nilainya sensitif → dienkripsi saat disimpan. */
     protected static array $sensitiveKeys = [
         'doku_secret_key', 'moota_secret_token',
-        'mailketing_api_token', 'whatsapp_api_key', 'telegram_bot_token',
+        'mailketing_api_token', 'whatsapp_api_key', 'fonnte_token', 'telegram_bot_token',
     ];
 
     public static function get(string $key, $default = null)

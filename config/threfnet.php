@@ -27,8 +27,12 @@ return [
     ],
 
     'whatsapp' => [
+        'provider'    => env('WHATSAPP_PROVIDER', 'gateway'),
         'gateway_url' => env('WHATSAPP_GATEWAY_URL'),
         'api_key'     => env('WHATSAPP_API_KEY'),
+        'fonnte_url'  => env('FONNTE_URL', 'https://api.fonnte.com/send'),
+        'fonnte_token'=> env('FONNTE_TOKEN'),
+        'country_code'=> env('WHATSAPP_COUNTRY_CODE', '62'),
     ],
 
     'mikrotik' => [
