@@ -1,6 +1,10 @@
 @extends('layouts.admin')
 @section('title', 'Pengaturan Notifikasi')
 
+@section('actions')
+    <a href="{{ url('/settings/integrations') }}" class="btn btn-outline-primary btn-sm">Tes Integrasi</a>
+@endsection
+
 @section('content')
 <form method="POST" action="{{ url('/settings/notification') }}" class="mb-4">
     @csrf

@@ -35,22 +35,77 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ url('/login') }}">
-                @csrf
-                <div class="mb-3">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control" value="{{ old('email') }}" required autofocus>
+            @if(session('otp_success'))
+                <div class="alert alert-success mb-3">
+                    <div>{{ session('otp_success') }}</div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" required>
+            @endif
+
+            @if(session('otp_error'))
+                <div class="alert alert-danger mb-3">
+                    <div>{{ session('otp_error') }}</div>
                 </div>
-                <div class="form-check mb-3">
-                    <input type="checkbox" name="remember" value="1" class="form-check-input" id="rm">
-                    <label class="form-check-label small" for="rm">Ingat saya di perangkat ini</label>
-                </div>
-                <button class="btn btn-primary w-100">Masuk</button>
-            </form>
+            @endif
+
+            <div class="mb-4">
+                <div class="small text-uppercase fw-semibold mb-2" style="letter-spacing:.08em;color:#7A8CA5">Masuk dengan password</div>
+
+                <form method="POST" action="{{ url('/login') }}">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ old('email') }}" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="remember" value="1" class="form-check-input" id="rm">
+                        <label class="form-check-label small" for="rm">Ingat saya di perangkat ini</label>
+                    </div>
+                    <button class="btn btn-primary w-100">Masuk</button>
+                </form>
+            </div>
+
+            <hr class="my-4">
+
+            <div>
+                <div class="small text-uppercase fw-semibold mb-2" style="letter-spacing:.08em;color:#7A8CA5">Masuk dengan OTP WhatsApp</div>
+                <p class="small mb-3" style="color:#7A8CA5">Masukkan nomor WhatsApp admin yang terdaftar, lalu verifikasi kode OTP 6 digit yang dikirim ke WA Anda.</p>
+
+                <form method="POST" action="{{ route('signin.otp.request') }}" class="mb-3">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Nomor WhatsApp</label>
+                        <input type="text" name="otp_phone" class="form-control" value="{{ old('otp_phone') }}" placeholder="08xxxxxxxxxx" autocomplete="tel" required>
+                        @error('otp_phone')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <button class="btn btn-outline-primary w-100">Kirim OTP ke WhatsApp</button>
+                </form>
+
+                <form method="POST" action="{{ route('signin.otp.verify') }}">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Nomor WhatsApp</label>
+                        <input type="text" name="otp_phone" class="form-control" value="{{ old('otp_phone') }}" placeholder="08xxxxxxxxxx" autocomplete="tel" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Kode OTP</label>
+                        <input type="text" name="otp_code" class="form-control" inputmode="numeric" maxlength="6" placeholder="6 digit OTP" required>
+                        @error('otp_code')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="otp_remember" value="1" class="form-check-input" id="otpRemember">
+                        <label class="form-check-label small" for="otpRemember">Ingat sesi perangkat ini</label>
+                    </div>
+                    <button class="btn btn-dark w-100">Verifikasi OTP & Masuk</button>
+                </form>
+            </div>
         </div>
     </div>
 

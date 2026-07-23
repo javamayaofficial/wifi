@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\WhatsappOtpLoginController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -32,6 +33,12 @@ Route::middleware('guest')->group(function () {
     Route::post('signin', [AuthenticatedSessionController::class, 'store']);
 
     Route::post('masuk', [AuthenticatedSessionController::class, 'store']);
+
+    Route::post('signin/otp/request', [WhatsappOtpLoginController::class, 'request'])
+        ->name('signin.otp.request');
+
+    Route::post('signin/otp/verify', [WhatsappOtpLoginController::class, 'verify'])
+        ->name('signin.otp.verify');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

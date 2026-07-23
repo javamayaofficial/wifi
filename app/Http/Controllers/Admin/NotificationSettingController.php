@@ -32,6 +32,18 @@ class NotificationSettingController extends Controller
         return view('settings.notification', compact('values'));
     }
 
+    public function integrations(Request $request): View
+    {
+        $values = [
+            'whatsapp_provider' => Setting::get('whatsapp_provider', config('threfnet.whatsapp.provider', 'gateway')),
+            'whatsapp_target' => old('target', $request->user()?->phone),
+            'email_target' => old('target', $request->user()?->email),
+            'telegram_chat_id' => Setting::get('telegram_chat_id'),
+        ];
+
+        return view('settings.integrations', compact('values'));
+    }
+
     public function update(Request $request): RedirectResponse
     {
         $request->validate([
@@ -64,6 +76,10 @@ class NotificationSettingController extends Controller
             'channel' => ['required', 'in:whatsapp,email,telegram'],
             'target'  => ['nullable', 'string'],
         ]);
+
+        if (in_array($data['channel'], ['whatsapp', 'email'], true) && blank($data['target'] ?? null)) {
+            return back()->with('error', 'Target wajib diisi untuk tes WhatsApp atau Email.');
+        }
 
         if ($data['channel'] === 'telegram') {
             $res = $tg->send('Tes alert THRE.F.NET Billing System. Abaikan pesan ini.');

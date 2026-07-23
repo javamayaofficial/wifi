@@ -35,6 +35,12 @@ return [
         'country_code'=> env('WHATSAPP_COUNTRY_CODE', '62'),
     ],
 
+    'auth_otp' => [
+        'ttl_minutes'         => (int) env('AUTH_OTP_TTL_MINUTES', 5),
+        'resend_cooldown'     => (int) env('AUTH_OTP_RESEND_COOLDOWN', 60),
+        'max_verify_attempts' => (int) env('AUTH_OTP_MAX_VERIFY_ATTEMPTS', 5),
+    ],
+
     'mikrotik' => [
         'default_ip'   => env('MIKROTIK_IP', '192.168.1.1'),
         'default_port' => (int) env('MIKROTIK_PORT', 8728),

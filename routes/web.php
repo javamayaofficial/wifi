@@ -167,6 +167,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/settings/notification', [NotificationSettingController::class, 'index']);
         Route::post('/settings/notification', [NotificationSettingController::class, 'update']);
         Route::post('/settings/notification/test', [NotificationSettingController::class, 'test']);
+        Route::get('/settings/integrations', [NotificationSettingController::class, 'integrations']);
+        Route::post('/settings/integrations/test', [NotificationSettingController::class, 'test']);
     });
 });
 
