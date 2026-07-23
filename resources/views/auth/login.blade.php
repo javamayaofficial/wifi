@@ -35,18 +35,6 @@
                 </div>
             @endif
 
-            @if(session('otp_success'))
-                <div class="alert alert-success mb-3">
-                    <div>{{ session('otp_success') }}</div>
-                </div>
-            @endif
-
-            @if(session('otp_error'))
-                <div class="alert alert-danger mb-3">
-                    <div>{{ session('otp_error') }}</div>
-                </div>
-            @endif
-
             <div class="mb-4">
                 <div class="small text-uppercase fw-semibold mb-2" style="letter-spacing:.08em;color:#7A8CA5">Masuk dengan password</div>
 
