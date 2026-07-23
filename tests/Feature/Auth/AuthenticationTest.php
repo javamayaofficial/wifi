@@ -61,6 +61,21 @@ class AuthenticationTest extends TestCase
         $response->assertRedirect(route('dashboard', absolute: false));
     }
 
+    public function test_users_can_authenticate_using_whatsapp_number(): void
+    {
+        $user = User::factory()->create([
+            'phone' => '08123456789',
+        ]);
+
+        $response = $this->post('/login', [
+            'login' => '08123456789',
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect(route('dashboard', absolute: false));
+    }
+
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create();

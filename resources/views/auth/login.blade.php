@@ -53,8 +53,8 @@
                 <form method="POST" action="{{ url('/login') }}">
                     @csrf
                     <div class="mb-3">
-                        <label class="form-label">Email atau Username</label>
-                        <input type="text" name="login" class="form-control" value="{{ old('login', old('email')) }}" required autofocus>
+                        <label class="form-label">Email, Username, atau No. WhatsApp</label>
+                        <input type="text" name="login" class="form-control" value="{{ old('login', old('email')) }}" placeholder="admin / admin@domain / 08xxxxxxxxxx" required autofocus>
                         @error('login')
                             <div class="text-danger small mt-1">{{ $message }}</div>
                         @enderror
