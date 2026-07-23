@@ -21,7 +21,7 @@ return [
     'mailketing' => [
         'api_token'  => env('MAILKETING_API_TOKEN'),
         'from_name'  => env('MAILKETING_FROM_NAME', 'THRE.F.NET'),
-        'from_email' => env('MAILKETING_FROM_EMAIL', 'info@thre.f.net'),
+        'from_email' => env('MAILKETING_FROM_EMAIL', 'threfnet@javamaya.id'),
         'sandbox'    => env('MAILKETING_SANDBOX', true),
         'endpoint'   => 'https://api.mailketing.co.id/api/v1/send',
     ],
