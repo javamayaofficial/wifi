@@ -18,11 +18,11 @@
     </div>
 @endif
 
-<form method="GET" class="row g-2 mb-3">
-    <div class="col-auto">
+<form method="GET" class="row g-2 mb-3 page-filters">
+    <div class="col-12 col-md">
         <input type="text" name="q" value="{{ request('q') }}" class="form-control form-control-sm" placeholder="Cari nama / username">
     </div>
-    <div class="col-auto">
+    <div class="col-12 col-md-3">
         <select name="status" class="form-select form-select-sm">
             <option value="">Semua status</option>
             @foreach(['new','active','isolated','suspended'] as $s)
@@ -30,12 +30,12 @@
             @endforeach
         </select>
     </div>
-    <div class="col-auto"><button class="btn btn-sm btn-outline-primary">Filter</button></div>
+    <div class="col-12 col-md-auto"><button class="btn btn-sm btn-outline-primary">Filter</button></div>
 </form>
 
 <div class="card shadow-sm border-0">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 mobile-card-table">
             <thead class="table-light">
             <tr>
                 <th>Nama</th><th>Username</th><th>Paket</th><th>Router</th>
@@ -45,12 +45,12 @@
             <tbody>
             @forelse($customers as $c)
                 <tr>
-                    <td>{{ $c->name }}</td>
-                    <td><code>{{ $c->username }}</code></td>
-                    <td>{{ $c->plan?->name }}</td>
-                    <td>{{ $c->router?->name }}</td>
-                    <td>{{ $c->expired_date?->format('d/m/Y') }}</td>
-                    <td>
+                    <td data-label="Nama">{{ $c->name }}</td>
+                    <td data-label="Username"><code>{{ $c->username }}</code></td>
+                    <td data-label="Paket">{{ $c->plan?->name }}</td>
+                    <td data-label="Router">{{ $c->router?->name }}</td>
+                    <td data-label="Expired">{{ $c->expired_date?->format('d/m/Y') }}</td>
+                    <td data-label="Status">
                         @php $d = ['active'=>'ok','isolated'=>'down','suspended'=>'warn','new'=>'idle'][$c->status] ?? 'idle'; @endphp
                         <span class="text-nowrap"><span class="dot dot-{{ $d }}"></span>{{ $c->status }}</span>
                         @if($c->sync_error)
@@ -59,7 +59,7 @@
                             <div class="small text-muted">belum tersinkron</div>
                         @endif
                     </td>
-                    <td class="text-end text-nowrap">
+                    <td data-label="Aksi" class="text-end text-nowrap customer-actions">
                         <a href="{{ url("/customers/{$c->id}/edit") }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                         <form method="POST" action="{{ url("/customers/{$c->id}/toggle") }}" class="d-inline">
                             @csrf

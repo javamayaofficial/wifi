@@ -123,9 +123,9 @@
         </div>
     </div>
 
-    <div class="mt-3">
+    <div class="mt-3 d-grid gap-2 d-md-flex align-items-md-center">
         <button class="btn btn-primary">Simpan</button>
-        <a href="{{ url('/customers') }}" class="btn btn-link">Batal</a>
+        <a href="{{ url('/customers') }}" class="btn btn-outline-secondary">Batal</a>
     </div>
 </form>
 @endsection
