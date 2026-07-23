@@ -149,6 +149,40 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-1">Template Pengingat Masa Aktif</h6>
+                    <p class="text-muted small mb-3">
+                        Notifikasi ini dikirim otomatis setiap hari mulai H-7 sampai H-1 sebelum masa aktif pelanggan berakhir.
+                        Teks default sudah disediakan dan bisa Anda ubah kapan saja.
+                    </p>
+
+                    <div class="mb-3">
+                        <label class="form-label">Teks Notifikasi Default</label>
+                        <textarea name="reminder_h7_template" class="form-control" rows="8" placeholder="Tulis template pengingat di sini...">{{ old('reminder_h7_template', $values['reminder_h7_template'] ?? '') }}</textarea>
+                    </div>
+
+                    <div class="rounded-3 border p-3 small bg-light-subtle">
+                        <div class="fw-semibold mb-2">Placeholder yang bisa dipakai</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <code>{customer_name}</code>
+                            <code>{plan_name}</code>
+                            <code>{expired_date}</code>
+                            <code>{days_left}</code>
+                            <code>{amount}</code>
+                            <code>{payment_link}</code>
+                            <code>{username}</code>
+                            <code>{company_name}</code>
+                        </div>
+                        <div class="form-text mt-2 mb-0">
+                            Jika dikosongkan, sistem akan kembali memakai template bawaan THRE.F.NET.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="d-flex justify-content-end mt-3">

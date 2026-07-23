@@ -39,6 +39,7 @@ class ThrefnetSeeder extends Seeder
             'company_phone'    => '',
             'company_email'    => 'info@thre.f.net',
             'hotspot_login_url'=> '',
+            'reminder_h7_template' => config('threfnet.reminders.h7_daily_template'),
         ];
 
         foreach ($defaults as $key => $value) {

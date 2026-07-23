@@ -41,6 +41,18 @@ return [
         'max_verify_attempts' => (int) env('AUTH_OTP_MAX_VERIFY_ATTEMPTS', 5),
     ],
 
+    'reminders' => [
+        'h7_daily_template' => env(
+            'REMINDER_H7_DAILY_TEMPLATE',
+            "[THRE.F.NET - Pengingat Masa Aktif]\n"
+            . "Halo {customer_name}, masa aktif layanan internet Anda ({plan_name}) akan berakhir pada {expired_date}.\n"
+            . "Sisa masa aktif: {days_left} hari.\n"
+            . "Tagihan: {amount}\n"
+            . "Silakan lakukan pembayaran melalui: {payment_link}\n"
+            . "Terima kasih."
+        ),
+    ],
+
     'mikrotik' => [
         'default_ip'   => env('MIKROTIK_IP', '192.168.1.1'),
         'default_port' => (int) env('MIKROTIK_PORT', 8728),

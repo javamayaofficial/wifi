@@ -6,55 +6,77 @@ use App\Jobs\SendEmailNotification;
 use App\Jobs\SendWhatsAppNotification;
 use App\Models\Customer;
 use App\Models\NotificationLog;
+use App\Models\Setting;
 use App\Services\Notifications\MailketingService;
 use Illuminate\Console\Command;
 
 /**
- * Reminder BERJENJANG sebelum jatuh tempo.
+ * Reminder HARIAN sebelum jatuh tempo.
  *
  * Mencegah lebih murah daripada menghukum: mengingatkan pelanggan sebelum
  * jatuh tempo biasanya menurunkan jumlah isolir dan keluhan jauh lebih efektif
  * daripada isolir itu sendiri.
  *
- * Jadwal default: H-7, H-3, H-1, dan H+1 (setelah lewat tempo).
+ * Jadwal default: setiap hari mulai H-7 s/d H-1, ditambah H+1 (opsional follow-up).
  */
 class SendPaymentReminders extends Command
 {
-    protected $signature = 'threfnet:send-reminders';
-    protected $description = 'THRE.F.NET: kirim pengingat jatuh tempo berjenjang';
-
-    /** offset hari => kode konteks */
-    protected array $schedule = [
-        7  => 'reminder_h7',
-        3  => 'reminder_h3',
-        1  => 'reminder_h1',
-        -1 => 'reminder_lewat',
-    ];
+    protected $signature = 'threfnet:send-reminders {--dry-run : Tampilkan target reminder tanpa mengirim notifikasi}';
+    protected $description = 'THRE.F.NET: kirim pengingat harian H-7 sampai H-1 ke pelanggan';
 
     public function handle(): int
     {
         $total = 0;
+        $dryRun = (bool) $this->option('dry-run');
+        $today = today();
 
-        foreach ($this->schedule as $offset => $context) {
-            $targetDate = now()->addDays($offset)->toDateString();
+        $customers = Customer::query()
+            ->with('plan')
+            ->whereIn('status', ['active', 'new'])
+            ->whereBetween('expired_date', [$today->copy()->addDay(), $today->copy()->addDays(7)])
+            ->orderBy('expired_date')
+            ->get();
 
-            $customers = Customer::query()
-                ->with('plan')
-                ->whereIn('status', ['active', 'new'])
-                ->whereDate('expired_date', $targetDate)
-                ->get();
+        foreach ($customers as $customer) {
+            $daysLeft = (int) $today->diffInDays($customer->expired_date, false);
+            $context = 'reminder_h7_daily';
 
-            foreach ($customers as $customer) {
-                if ($this->alreadySent($customer->id, $context)) {
-                    continue;
-                }
-
-                $this->dispatchReminder($customer, $offset, $context);
-                $total++;
+            if ($daysLeft < 1 || $daysLeft > 7 || $this->alreadySent($customer->id, $context)) {
+                continue;
             }
+
+            if ($dryRun) {
+                $this->line("H-{$daysLeft}: {$customer->name} ({$customer->username})");
+            } else {
+                $this->dispatchReminder($customer, $daysLeft, $context);
+            }
+
+            $total++;
         }
 
-        $this->info("Reminder terkirim: {$total}");
+        // Tetap pertahankan follow-up H+1 yang sudah ada.
+        $overdueCustomers = Customer::query()
+            ->with('plan')
+            ->whereIn('status', ['active', 'new'])
+            ->whereDate('expired_date', $today->copy()->subDay())
+            ->orderBy('expired_date')
+            ->get();
+
+        foreach ($overdueCustomers as $customer) {
+            if ($this->alreadySent($customer->id, 'reminder_lewat')) {
+                continue;
+            }
+
+            if ($dryRun) {
+                $this->line("Lewat tempo: {$customer->name} ({$customer->username})");
+            } else {
+                $this->dispatchOverdueReminder($customer);
+            }
+
+            $total++;
+        }
+
+        $this->info($dryRun ? "Target reminder ditemukan: {$total}" : "Reminder diproses: {$total}");
 
         return self::SUCCESS;
     }
@@ -64,43 +86,57 @@ class SendPaymentReminders extends Command
     {
         return NotificationLog::where('customer_id', $customerId)
             ->where('context', $context)
+            ->where('status', 'sent')
             ->whereDate('created_at', today())
             ->exists();
     }
 
-    protected function dispatchReminder(Customer $customer, int $offset, string $context): void
+    protected function dispatchReminder(Customer $customer, int $daysLeft, string $context): void
     {
-        $tanggal = $customer->expired_date->translatedFormat('d F Y');
-        $harga   = 'Rp ' . number_format($customer->plan->price, 0, ',', '.');
-        $link    = config('app.url') . '/bayar/' . $customer->username;
-
-        if ($offset > 0) {
-            $judul = "Pengingat Jatuh Tempo ({$offset} hari lagi)";
-            $wa = "[THRE.F.NET - Pengingat Jatuh Tempo]\n"
-                . "Halo {$customer->name}, layanan internet Anda ({$customer->plan->name}) "
-                . "akan jatuh tempo pada {$tanggal} ({$offset} hari lagi).\n"
-                . "Tagihan: {$harga}\n"
-                . "Bayar di sini: {$link}\n"
-                . "Terima kasih.";
-        } else {
-            $judul = 'Tagihan Lewat Jatuh Tempo';
-            $wa = "[THRE.F.NET - Tagihan Lewat Jatuh Tempo]\n"
-                . "Halo {$customer->name}, tagihan Anda jatuh tempo pada {$tanggal} "
-                . "dan belum kami terima.\n"
-                . "Tagihan: {$harga}\n"
-                . "Segera bayar agar layanan tidak terisolasi: {$link}";
-        }
+        $judul = "Pengingat Masa Aktif ({$daysLeft} hari lagi)";
+        $wa = $this->renderReminderTemplate($customer, $daysLeft);
 
         $html = MailketingService::template($judul,
-            "<p>Halo <b>{$customer->name}</b>,</p>"
-            . "<p>Paket: <b>{$customer->plan->name}</b><br>"
-            . "Jatuh tempo: <b>{$tanggal}</b><br>"
-            . "Tagihan: <b>{$harga}</b></p>"
-            . "<p><a href=\"{$link}\" style=\"background:#0d6efd;color:#fff;padding:10px 18px;"
-            . "border-radius:6px;text-decoration:none;display:inline-block\">Bayar Sekarang</a></p>"
+            '<p style="white-space:pre-line">' . e($wa) . '</p>'
         );
 
         SendWhatsAppNotification::dispatch($customer, $wa, $context);
         SendEmailNotification::dispatch($customer, "THRE.F.NET - {$judul}", $html, $context);
+    }
+
+    protected function dispatchOverdueReminder(Customer $customer): void
+    {
+        $tanggal = $customer->expired_date->translatedFormat('d F Y');
+        $harga   = 'Rp ' . number_format($customer->plan->price, 0, ',', '.');
+        $link    = config('app.url') . '/bayar/' . $customer->username;
+        $judul   = 'Tagihan Lewat Jatuh Tempo';
+        $wa = "[THRE.F.NET - Tagihan Lewat Jatuh Tempo]\n"
+            . "Halo {$customer->name}, tagihan Anda jatuh tempo pada {$tanggal} "
+            . "dan belum kami terima.\n"
+            . "Tagihan: {$harga}\n"
+            . "Segera bayar agar layanan tidak terisolasi: {$link}";
+
+        $html = MailketingService::template($judul,
+            '<p style="white-space:pre-line">' . e($wa) . '</p>'
+        );
+
+        SendWhatsAppNotification::dispatch($customer, $wa, 'reminder_lewat');
+        SendEmailNotification::dispatch($customer, "THRE.F.NET - {$judul}", $html, 'reminder_lewat');
+    }
+
+    protected function renderReminderTemplate(Customer $customer, int $daysLeft): string
+    {
+        $template = Setting::get('reminder_h7_template', config('threfnet.reminders.h7_daily_template'));
+
+        return strtr($template, [
+            '{customer_name}' => $customer->name,
+            '{plan_name}'     => $customer->plan?->name ?? '-',
+            '{expired_date}'  => $customer->expired_date->translatedFormat('d F Y'),
+            '{days_left}'     => (string) $daysLeft,
+            '{amount}'        => 'Rp ' . number_format((float) ($customer->plan?->price ?? 0), 0, ',', '.'),
+            '{payment_link}'  => config('app.url') . '/bayar/' . $customer->username,
+            '{username}'      => $customer->username,
+            '{company_name}'  => config('app.name', 'THRE.F.NET'),
+        ]);
     }
 }

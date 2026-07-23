@@ -13,7 +13,7 @@ Schedule::command('threfnet:check-expired')
     ->everyMinute()
     ->withoutOverlapping();
 
-// Reminder berjenjang H-7, H-3, H-1, H+1 (sekali sehari pagi hari).
+// Reminder harian H-7 sampai H-1, plus follow-up H+1 (sekali sehari pagi hari).
 Schedule::command('threfnet:send-reminders')
     ->dailyAt('08:00')
     ->withoutOverlapping();
