@@ -8,12 +8,18 @@ use App\Models\Router;
 use App\Models\Ticket;
 use App\Models\Transaction;
 use App\Models\Voucher;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View|RedirectResponse
     {
+        if ($request->user()?->isCustomerAccessOnly()) {
+            return redirect('/customers');
+        }
+
         $stats = [
             'total'    => Customer::count(),
             'active'   => Customer::where('status', 'active')->count(),

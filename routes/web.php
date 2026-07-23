@@ -69,71 +69,75 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/customers/import', [CustomerController::class, 'import']);
     Route::get('/customers/{customer}/edit', [CustomerController::class, 'edit']);
     Route::put('/customers/{customer}', [CustomerController::class, 'update']);
-    Route::delete('/customers/{customer}', [CustomerController::class, 'destroy']);
-    Route::post('/customers/{customer}/toggle', [CustomerController::class, 'toggle']);
+    Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])
+        ->middleware('not_customer_only');
+    Route::post('/customers/{customer}/toggle', [CustomerController::class, 'toggle'])
+        ->middleware('not_customer_only');
 
     // Paket
-    Route::get('/plans', [PlanController::class, 'index']);
-    Route::get('/plans/create', [PlanController::class, 'create']);
-    Route::post('/plans', [PlanController::class, 'store']);
-    Route::get('/plans/{plan}/edit', [PlanController::class, 'edit']);
-    Route::put('/plans/{plan}', [PlanController::class, 'update']);
-    Route::delete('/plans/{plan}', [PlanController::class, 'destroy']);
+    Route::get('/plans', [PlanController::class, 'index'])->middleware('not_customer_only');
+    Route::get('/plans/create', [PlanController::class, 'create'])->middleware('not_customer_only');
+    Route::post('/plans', [PlanController::class, 'store'])->middleware('not_customer_only');
+    Route::get('/plans/{plan}/edit', [PlanController::class, 'edit'])->middleware('not_customer_only');
+    Route::put('/plans/{plan}', [PlanController::class, 'update'])->middleware('not_customer_only');
+    Route::delete('/plans/{plan}', [PlanController::class, 'destroy'])->middleware('not_customer_only');
 
     // Router
-    Route::get('/routers', [RouterController::class, 'index']);
-    Route::get('/routers/create', [RouterController::class, 'create']);
-    Route::post('/routers', [RouterController::class, 'store']);
-    Route::get('/routers/{router}/edit', [RouterController::class, 'edit']);
-    Route::put('/routers/{router}', [RouterController::class, 'update']);
-    Route::delete('/routers/{router}', [RouterController::class, 'destroy']);
-    Route::post('/routers/{router}/test', [RouterController::class, 'test']);
+    Route::get('/routers', [RouterController::class, 'index'])->middleware('not_customer_only');
+    Route::get('/routers/create', [RouterController::class, 'create'])->middleware('not_customer_only');
+    Route::post('/routers', [RouterController::class, 'store'])->middleware('not_customer_only');
+    Route::get('/routers/{router}/edit', [RouterController::class, 'edit'])->middleware('not_customer_only');
+    Route::put('/routers/{router}', [RouterController::class, 'update'])->middleware('not_customer_only');
+    Route::delete('/routers/{router}', [RouterController::class, 'destroy'])->middleware('not_customer_only');
+    Route::post('/routers/{router}/test', [RouterController::class, 'test'])->middleware('not_customer_only');
 
     // MikroTik: import dari router + monitoring live
-    Route::get('/mikrotik/import', [MikrotikController::class, 'importForm']);
-    Route::post('/mikrotik/import', [MikrotikController::class, 'import']);
-    Route::get('/mikrotik/monitor', [MikrotikController::class, 'monitor']);
-    Route::get('/mikrotik/profiles', [MikrotikController::class, 'profiles']);
-    Route::post('/mikrotik/refresh', [MikrotikController::class, 'refresh']);
-    Route::post('/mikrotik/disconnect', [MikrotikController::class, 'disconnect']);
+    Route::get('/mikrotik/import', [MikrotikController::class, 'importForm'])->middleware('not_customer_only');
+    Route::post('/mikrotik/import', [MikrotikController::class, 'import'])->middleware('not_customer_only');
+    Route::get('/mikrotik/monitor', [MikrotikController::class, 'monitor'])->middleware('not_customer_only');
+    Route::get('/mikrotik/profiles', [MikrotikController::class, 'profiles'])->middleware('not_customer_only');
+    Route::post('/mikrotik/refresh', [MikrotikController::class, 'refresh'])->middleware('not_customer_only');
+    Route::post('/mikrotik/disconnect', [MikrotikController::class, 'disconnect'])->middleware('not_customer_only');
 
     // Transaksi + aktivasi manual (AC-5)
-    Route::get('/transactions', [TransactionController::class, 'index']);
-    Route::post('/transactions/{transaction}/activate', [TransactionController::class, 'activate']);
+    Route::get('/transactions', [TransactionController::class, 'index'])->middleware('not_customer_only');
+    Route::post('/transactions/{transaction}/activate', [TransactionController::class, 'activate'])->middleware('not_customer_only');
 
     // Tiket gangguan (teknisi juga boleh)
-    Route::get('/tickets', [TicketController::class, 'index']);
-    Route::get('/tickets/create', [TicketController::class, 'create']);
-    Route::post('/tickets', [TicketController::class, 'store']);
-    Route::get('/tickets/{ticket}', [TicketController::class, 'show']);
-    Route::post('/tickets/{ticket}/updates', [TicketController::class, 'addUpdate']);
+    Route::get('/tickets', [TicketController::class, 'index'])->middleware('not_customer_only');
+    Route::get('/tickets/create', [TicketController::class, 'create'])->middleware('not_customer_only');
+    Route::post('/tickets', [TicketController::class, 'store'])->middleware('not_customer_only');
+    Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->middleware('not_customer_only');
+    Route::post('/tickets/{ticket}/updates', [TicketController::class, 'addUpdate'])->middleware('not_customer_only');
     Route::post('/tickets/{ticket}/assign', [TicketController::class, 'assign'])
+        ->middleware('not_customer_only')
         ->middleware('role:admin');
 
     // Reset password portal pelanggan
-    Route::post('/customers/{customer}/portal-password', [CustomerController::class, 'resetPortalPassword']);
+    Route::post('/customers/{customer}/portal-password', [CustomerController::class, 'resetPortalPassword'])
+        ->middleware('not_customer_only');
 
     // Peta sebaran pelanggan
     Route::get('/map', [MapController::class, 'index']);
 
     // Inventory perangkat
-    Route::get('/inventory', [InventoryController::class, 'index']);
-    Route::post('/inventory', [InventoryController::class, 'store']);
-    Route::put('/inventory/{inventory}', [InventoryController::class, 'update']);
-    Route::delete('/inventory/{inventory}', [InventoryController::class, 'destroy']);
+    Route::get('/inventory', [InventoryController::class, 'index'])->middleware('not_customer_only');
+    Route::post('/inventory', [InventoryController::class, 'store'])->middleware('not_customer_only');
+    Route::put('/inventory/{inventory}', [InventoryController::class, 'update'])->middleware('not_customer_only');
+    Route::delete('/inventory/{inventory}', [InventoryController::class, 'destroy'])->middleware('not_customer_only');
 
     // Voucher hotspot
-    Route::get('/vouchers', [VoucherController::class, 'index']);
-    Route::get('/vouchers/print', [VoucherController::class, 'print']);
-    Route::post('/vouchers/profiles', [VoucherController::class, 'storeProfile']);
-    Route::post('/vouchers/generate', [VoucherController::class, 'generate']);
-    Route::post('/vouchers/sync-usage', [VoucherController::class, 'syncUsage']);
-    Route::post('/vouchers/handover', [VoucherController::class, 'handOver']);
-    Route::post('/vouchers/settle', [VoucherController::class, 'settle']);
-    Route::post('/vouchers/{voucher}/sold', [VoucherController::class, 'markSold']);
+    Route::get('/vouchers', [VoucherController::class, 'index'])->middleware('not_customer_only');
+    Route::get('/vouchers/print', [VoucherController::class, 'print'])->middleware('not_customer_only');
+    Route::post('/vouchers/profiles', [VoucherController::class, 'storeProfile'])->middleware('not_customer_only');
+    Route::post('/vouchers/generate', [VoucherController::class, 'generate'])->middleware('not_customer_only');
+    Route::post('/vouchers/sync-usage', [VoucherController::class, 'syncUsage'])->middleware('not_customer_only');
+    Route::post('/vouchers/handover', [VoucherController::class, 'handOver'])->middleware('not_customer_only');
+    Route::post('/vouchers/settle', [VoucherController::class, 'settle'])->middleware('not_customer_only');
+    Route::post('/vouchers/{voucher}/sold', [VoucherController::class, 'markSold'])->middleware('not_customer_only');
 
     // Invoice / kwitansi PDF (dari dashboard)
-    Route::get('/transactions/{transaction}/invoice', [InvoiceController::class, 'download']);
+    Route::get('/transactions/{transaction}/invoice', [InvoiceController::class, 'download'])->middleware('not_customer_only');
 
     // Keuangan: pengeluaran & laba rugi (owner + admin)
     Route::middleware('role:admin')->group(function () {

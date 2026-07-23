@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => App\Http\Middleware\EnsureRole::class,
             'portal' => App\Http\Middleware\PortalAuth::class,
+            'not_customer_only' => App\Http\Middleware\EnsureNotCustomerAccessOnly::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

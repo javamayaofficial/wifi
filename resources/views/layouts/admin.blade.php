@@ -3,6 +3,7 @@
     use App\Models\Router as RouterModel;
 
     $u = auth()->user();
+    $customerOnly = $u?->isCustomerAccessOnly() ?? false;
 
     // Penanda menu aktif berdasarkan segmen URL.
     $seg = request()->path();
@@ -54,87 +55,95 @@
                     Pelanggan
                 </a>
 
-                <a href="{{ url('/plans') }}" class="nav-item {{ $is('plans') ? 'is-active' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                    Paket
-                </a>
+                @unless($customerOnly)
+                    <a href="{{ url('/plans') }}" class="nav-item {{ $is('plans') ? 'is-active' : '' }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        Paket
+                    </a>
 
-                <a href="{{ url('/tickets') }}" class="nav-item {{ $is('tickets') ? 'is-active' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    Tiket
-                    @if($badgeTiket) <span class="nav-count">{{ $badgeTiket }}</span> @endif
-                </a>
+                    <a href="{{ url('/tickets') }}" class="nav-item {{ $is('tickets') ? 'is-active' : '' }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Tiket
+                        @if($badgeTiket) <span class="nav-count">{{ $badgeTiket }}</span> @endif
+                    </a>
+                @endunless
             </div>
 
             <div class="nav-group">
-                <div class="nav-label">Jaringan</div>
+                <div class="nav-label">{{ $customerOnly ? 'Pelanggan' : 'Jaringan' }}</div>
 
-                <a href="{{ url('/mikrotik/monitor') }}" class="nav-item {{ $is('mikrotik/monitor') ? 'is-active' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    Monitoring
-                </a>
+                @unless($customerOnly)
+                    <a href="{{ url('/mikrotik/monitor') }}" class="nav-item {{ $is('mikrotik/monitor') ? 'is-active' : '' }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        Monitoring
+                    </a>
+                @endunless
 
                 <a href="{{ url('/map') }}" class="nav-item {{ $is('map') ? 'is-active' : '' }}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     Peta Pelanggan
                 </a>
 
-                <a href="{{ url('/routers') }}" class="nav-item {{ $is('routers') ? 'is-active' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="18" x2="10.01" y2="18"/><path d="M12 14V6"/><path d="M8.5 6a3.5 3.5 0 0 1 7 0"/></svg>
-                    Router
-                    @if($badgeRouter) <span class="nav-count">{{ $badgeRouter }}</span> @endif
-                </a>
+                @unless($customerOnly)
+                    <a href="{{ url('/routers') }}" class="nav-item {{ $is('routers') ? 'is-active' : '' }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="18" x2="10.01" y2="18"/><path d="M12 14V6"/><path d="M8.5 6a3.5 3.5 0 0 1 7 0"/></svg>
+                        Router
+                        @if($badgeRouter) <span class="nav-count">{{ $badgeRouter }}</span> @endif
+                    </a>
 
-                <a href="{{ url('/inventory') }}" class="nav-item {{ $is('inventory') ? 'is-active' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                    Inventory
-                </a>
+                    <a href="{{ url('/inventory') }}" class="nav-item {{ $is('inventory') ? 'is-active' : '' }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        Inventory
+                    </a>
 
-                <a href="{{ url('/vouchers') }}" class="nav-item {{ $is('vouchers') ? 'is-active' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="13" y1="5" x2="13" y2="19" stroke-dasharray="2 3"/></svg>
-                    Voucher
-                </a>
+                    <a href="{{ url('/vouchers') }}" class="nav-item {{ $is('vouchers') ? 'is-active' : '' }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/><line x1="13" y1="5" x2="13" y2="19" stroke-dasharray="2 3"/></svg>
+                        Voucher
+                    </a>
+                @endunless
             </div>
 
-            <div class="nav-group">
-                <div class="nav-label">Keuangan</div>
+            @unless($customerOnly)
+                <div class="nav-group">
+                    <div class="nav-label">Keuangan</div>
 
-                <a href="{{ url('/transactions') }}" class="nav-item {{ $is('transactions') ? 'is-active' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                    Transaksi
-                </a>
-
-                @if($u?->hasRole('owner', 'admin', 'kasir'))
-                    <a href="{{ url('/reports/arrears') }}" class="nav-item {{ $is('reports/arrears') ? 'is-active' : '' }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                        Tunggakan
+                    <a href="{{ url('/transactions') }}" class="nav-item {{ $is('transactions') ? 'is-active' : '' }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        Transaksi
                     </a>
 
-                    <a href="{{ url('/reports/vouchers') }}" class="nav-item {{ $is('reports/vouchers') ? 'is-active' : '' }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
-                        Penjualan Voucher
-                    </a>
-                @endif
+                    @if($u?->hasRole('owner', 'admin', 'kasir'))
+                        <a href="{{ url('/reports/arrears') }}" class="nav-item {{ $is('reports/arrears') ? 'is-active' : '' }}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Tunggakan
+                        </a>
 
-                @if($u?->hasRole('owner', 'admin'))
-                    <a href="{{ url('/expenses') }}" class="nav-item {{ $is('expenses') ? 'is-active' : '' }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                        Pengeluaran
-                    </a>
+                        <a href="{{ url('/reports/vouchers') }}" class="nav-item {{ $is('reports/vouchers') ? 'is-active' : '' }}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+                            Penjualan Voucher
+                        </a>
+                    @endif
 
-                    <a href="{{ url('/reports/profit-loss') }}" class="nav-item {{ $is('reports/profit-loss') ? 'is-active' : '' }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                        Laba Rugi
-                    </a>
+                    @if($u?->hasRole('owner', 'admin'))
+                        <a href="{{ url('/expenses') }}" class="nav-item {{ $is('expenses') ? 'is-active' : '' }}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Pengeluaran
+                        </a>
 
-                    <a href="{{ url('/resellers') }}" class="nav-item {{ $is('resellers') ? 'is-active' : '' }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/></svg>
-                        Mitra
-                    </a>
-                @endif
-            </div>
+                        <a href="{{ url('/reports/profit-loss') }}" class="nav-item {{ $is('reports/profit-loss') ? 'is-active' : '' }}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                            Laba Rugi
+                        </a>
 
-            @if($u?->hasRole('owner', 'admin'))
+                        <a href="{{ url('/resellers') }}" class="nav-item {{ $is('resellers') ? 'is-active' : '' }}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M4 9v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/></svg>
+                            Mitra
+                        </a>
+                    @endif
+                </div>
+            @endunless
+
+            @if($u?->hasRole('owner', 'admin') && ! $customerOnly)
                 <div class="nav-group">
                     <div class="nav-label">Sistem</div>
 
