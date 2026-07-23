@@ -2,8 +2,6 @@
 @section('title', 'Import dari Router')
 
 @section('content')
-<h4 class="mb-3">Import Pelanggan dari MikroTik</h4>
-
 <p class="text-muted small">
     Menarik PPP secret yang sudah ada di router menjadi Pelanggan THRE.F.NET.
     Username yang <b>sudah terdaftar</b> di dashboard akan dilewati — data billing

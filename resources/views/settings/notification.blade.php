@@ -2,8 +2,6 @@
 @section('title', 'Pengaturan Notifikasi')
 
 @section('content')
-<h4 class="mb-4">Pengaturan Notifikasi THRE.F.NET</h4>
-
 <form method="POST" action="{{ url('/settings/notification') }}" class="mb-4">
     @csrf
     <div class="card shadow-sm border-0 mb-3">

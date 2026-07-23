@@ -2,8 +2,6 @@
 @section('title', 'Import Pelanggan')
 
 @section('content')
-<h4 class="mb-4">Import Pelanggan THRE.F.NET dari Excel</h4>
-
 <div class="card shadow-sm border-0" style="max-width:720px">
     <div class="card-body">
         <p class="mb-2">Format kolom pada baris pertama (header):</p>

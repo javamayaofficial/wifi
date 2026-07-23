@@ -2,7 +2,6 @@
 @section('title', 'Laporan Tunggakan')
 
 @section('content')
-<h4 class="mb-1">Laporan Tunggakan (Aging)</h4>
 <p class="text-muted small mb-4">
     Pelanggan yang sudah lewat jatuh tempo dan belum membayar, dikelompokkan
     berdasarkan lama tunggakan. Semakin lama, semakin kecil peluang tertagih.

@@ -2,8 +2,6 @@
 @section('title', 'Mitra / Reseller')
 
 @section('content')
-<h4 class="mb-3">Mitra / Reseller</h4>
-
 <div class="row g-3">
     <div class="col-lg-4">
         <div class="card shadow-sm border-0">
@@ -56,7 +54,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada mitra.</td></tr>
+                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada mitra. Tambahkan warung atau agen yang menjual atas nama Anda.</td></tr>
                     @endforelse
                     </tbody>
                 </table>

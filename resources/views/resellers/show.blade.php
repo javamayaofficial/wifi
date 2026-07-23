@@ -2,9 +2,8 @@
 @section('title', $reseller->name)
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">{{ $reseller->name }}</h4>
-    <a href="{{ url('/resellers') }}" class="btn btn-sm btn-outline-secondary">Kembali</a>
+<div class="d-flex justify-content-end align-items-center mb-3">
+        <a href="{{ url('/resellers') }}" class="btn btn-sm btn-outline-secondary">Kembali</a>
 </div>
 
 <div class="row g-3">
@@ -97,7 +96,7 @@
                             <td><span class="badge bg-{{ $c->status === 'active' ? 'success' : 'secondary' }}">{{ $c->status }}</span></td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="text-center text-muted py-4">Belum ada pelanggan.</td></tr>
+                        <tr><td colspan="4" class="text-center text-muted py-4">Belum ada pelanggan. Tambahkan satu per satu, atau tarik langsung dari router.</td></tr>
                     @endforelse
                     </tbody>
                 </table>

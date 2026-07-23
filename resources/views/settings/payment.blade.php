@@ -2,8 +2,6 @@
 @section('title', 'Pengaturan Pembayaran')
 
 @section('content')
-<h4 class="mb-4">Pengaturan Payment Gateway THRE.F.NET</h4>
-
 <form method="POST" action="{{ url('/settings/payment') }}">
     @csrf
     <div class="card shadow-sm border-0 mb-3">

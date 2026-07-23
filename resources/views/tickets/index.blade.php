@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 @section('title', 'Tiket Gangguan')
 
+@section('actions')
+    <a href="{{ url('/tickets/create') }}" class="btn btn-primary btn-sm">Buat tiket</a>
+@endsection
+
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Tiket Gangguan</h4>
-    <a href="{{ url('/tickets/create') }}" class="btn btn-primary btn-sm">+ Tiket Baru</a>
-</div>
 
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-3">
@@ -71,7 +71,7 @@
                     <td class="small text-muted">{{ $t->ageInHours() }} jam</td>
                 </tr>
             @empty
-                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada tiket.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada tiket. Laporan gangguan dari pelanggan akan muncul di sini.</td></tr>
             @endforelse
             </tbody>
         </table>

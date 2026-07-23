@@ -2,8 +2,6 @@
 @section('title', $customer->exists ? 'Edit Pelanggan' : 'Tambah Pelanggan')
 
 @section('content')
-<h4 class="mb-4">{{ $customer->exists ? 'Edit' : 'Tambah' }} Pelanggan THRE.F.NET</h4>
-
 <form method="POST" action="{{ $customer->exists ? url("/customers/{$customer->id}") : url('/customers') }}">
     @csrf
     @if($customer->exists) @method('PUT') @endif

@@ -2,8 +2,6 @@
 @section('title', 'Tiket Baru')
 
 @section('content')
-<h4 class="mb-4">Buat Tiket Gangguan</h4>
-
 <form method="POST" action="{{ url('/tickets') }}">
     @csrf
     <div class="card shadow-sm border-0" style="max-width:720px">

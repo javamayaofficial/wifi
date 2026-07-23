@@ -2,9 +2,8 @@
 @section('title', 'Peta Pelanggan')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Peta Sebaran Pelanggan</h4>
-    @if($tanpaKoordinat > 0)
+<div class="d-flex justify-content-end align-items-center mb-3">
+        @if($tanpaKoordinat > 0)
         <span class="badge bg-warning text-dark">{{ $tanpaKoordinat }} pelanggan belum punya koordinat</span>
     @endif
 </div>

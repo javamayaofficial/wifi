@@ -2,9 +2,8 @@
 @section('title', 'Laba Rugi')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Laporan Laba Rugi {{ $tahun }}</h4>
-    <form method="GET">
+<div class="d-flex justify-content-end align-items-center mb-3">
+        <form method="GET">
         <select name="tahun" class="form-select form-select-sm" onchange="this.form.submit()">
             @for($y = now()->year; $y >= now()->year - 4; $y--)
                 <option value="{{ $y }}" @selected($tahun === $y)>{{ $y }}</option>

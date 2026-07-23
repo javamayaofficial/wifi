@@ -2,9 +2,8 @@
 @section('title', 'Penjualan Voucher')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Laporan Penjualan Voucher</h4>
-    <form method="GET">
+<div class="d-flex justify-content-end align-items-center mb-3">
+        <form method="GET">
         <input type="month" name="bulan" value="{{ $bulan }}" class="form-control form-control-sm"
                onchange="this.form.submit()">
     </form>

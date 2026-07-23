@@ -1,52 +1,62 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-        Gunakan URL login aman:
-        <a class="font-semibold underline" href="{{ route('signin') }}">{{ route('signin') }}</a>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0F1B2D">
+    <title>Masuk · THRE.F.NET</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/threfnet.css') }}" rel="stylesheet">
+    <style>
+        body { background: var(--ink); display: grid; place-items: center; min-height: 100vh; padding: 24px; }
+        .box { width: 100%; max-width: 380px; }
+        .box .card-body { padding: 26px; }
+        .lead-brand { text-align: center; margin-bottom: 20px; }
+        .lead-brand .brand-mark { justify-content: center; font-size: 1.3rem; }
+        .lead-brand .brand-sub { text-align: center; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <div class="lead-brand">
+        <span class="brand-mark"><span class="brand-dot"></span> THRE.F.NET</span>
+        <div class="brand-sub">Billing System</div>
     </div>
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
+    <div class="card">
+        <div class="card-body">
+            @if(session('error'))
+                <div class="alert alert-danger mb-3">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="flex:0 0 auto;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <div>{{ session('error') }}</div>
+                </div>
             @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+            <form method="POST" action="{{ url('/login') }}">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ old('email') }}" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-check mb-3">
+                    <input type="checkbox" name="remember" value="1" class="form-check-input" id="rm">
+                    <label class="form-check-label small" for="rm">Ingat saya di perangkat ini</label>
+                </div>
+                <button class="btn btn-primary w-100">Masuk</button>
+            </form>
         </div>
-    </form>
-</x-guest-layout>
+    </div>
+
+    <p class="text-center small mt-3 mb-0" style="color:#7A8CA5">
+        Pelanggan? <a href="{{ url('/portal/login') }}" style="color:#A9B8CC">Masuk ke portal pelanggan</a>
+    </p>
+</div>
+</body>
+</html>

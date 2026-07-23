@@ -48,7 +48,7 @@
                         </span>
                     </li>
                 @empty
-                    <li class="list-group-item text-muted small">Belum ada transaksi.</li>
+                    <li class="list-group-item text-muted small">Belum ada transaksi. Tagihan muncul setelah pelanggan memulai pembayaran.</li>
                 @endforelse
             </ul>
         </div>

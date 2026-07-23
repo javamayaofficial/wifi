@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/mikrotik/import', [MikrotikController::class, 'importForm']);
     Route::post('/mikrotik/import', [MikrotikController::class, 'import']);
     Route::get('/mikrotik/monitor', [MikrotikController::class, 'monitor']);
+    Route::get('/mikrotik/profiles', [MikrotikController::class, 'profiles']);
     Route::post('/mikrotik/refresh', [MikrotikController::class, 'refresh']);
     Route::post('/mikrotik/disconnect', [MikrotikController::class, 'disconnect']);
 

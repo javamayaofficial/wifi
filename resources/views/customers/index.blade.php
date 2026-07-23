@@ -1,15 +1,13 @@
 @extends('layouts.admin')
 @section('title', 'Pelanggan')
 
+@section('actions')
+    <a href="{{ url('/mikrotik/import') }}" class="btn btn-outline-secondary btn-sm">Import dari router</a>
+    <a href="{{ url('/customers/import') }}" class="btn btn-outline-secondary btn-sm">Import Excel</a>
+    <a href="{{ url('/customers/create') }}" class="btn btn-primary btn-sm">Tambah pelanggan</a>
+@endsection
+
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Pelanggan THRE.F.NET</h4>
-    <div>
-        <a href="{{ url('/mikrotik/import') }}" class="btn btn-outline-primary btn-sm">Import dari Router</a>
-        <a href="{{ url('/customers/import') }}" class="btn btn-outline-secondary btn-sm">Import Excel</a>
-        <a href="{{ url('/customers/create') }}" class="btn btn-primary btn-sm">+ Tambah</a>
-    </div>
-</div>
 
 @if(session('import_errors'))
     <div class="alert alert-warning">
@@ -53,9 +51,8 @@
                     <td>{{ $c->router?->name }}</td>
                     <td>{{ $c->expired_date?->format('d/m/Y') }}</td>
                     <td>
-                        <span class="badge bg-{{ $c->status === 'active' ? 'success' : ($c->status === 'isolated' ? 'danger' : 'secondary') }}">
-                            {{ $c->status }}
-                        </span>
+                        @php $d = ['active'=>'ok','isolated'=>'down','suspended'=>'warn','new'=>'idle'][$c->status] ?? 'idle'; @endphp
+                        <span class="text-nowrap"><span class="dot dot-{{ $d }}"></span>{{ $c->status }}</span>
                         @if($c->sync_error)
                             <div class="small text-danger" title="{{ $c->sync_error }}">sync gagal</div>
                         @elseif(! $c->synced_at)
@@ -83,7 +80,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada pelanggan.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada pelanggan. Tambahkan satu per satu, atau tarik langsung dari router.</td></tr>
             @endforelse
             </tbody>
         </table>

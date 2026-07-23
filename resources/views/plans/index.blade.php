@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 @section('title', 'Paket')
 
+@section('actions')
+    <a href="{{ url('/plans/create') }}" class="btn btn-primary btn-sm">Tambah paket</a>
+@endsection
+
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Paket Internet THRE.F.NET</h4>
-    <a href="{{ url('/plans/create') }}" class="btn btn-primary btn-sm">+ Tambah Paket</a>
-</div>
 
 <div class="card shadow-sm border-0">
     <div class="table-responsive">
@@ -31,7 +31,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada paket.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada paket. Buat paket dulu sebelum menambah pelanggan.</td></tr>
             @endforelse
             </tbody>
         </table>

@@ -2,8 +2,6 @@
 @section('title', 'Transaksi')
 
 @section('content')
-<h4 class="mb-3">Laporan Transaksi THRE.F.NET</h4>
-
 <form method="GET" class="row g-2 mb-3">
     <div class="col-auto">
         <select name="status" class="form-select form-select-sm">
@@ -38,9 +36,8 @@
                     <td>Rp {{ number_format($t->amount_final, 0, ',', '.') }}</td>
                     <td>{{ strtoupper($t->payment_method) }}</td>
                     <td>
-                        <span class="badge bg-{{ $t->status === 'paid' ? 'success' : ($t->status === 'pending' ? 'warning text-dark' : 'secondary') }}">
-                            {{ $t->status }}
-                        </span>
+                        @php $d = ['paid'=>'ok','pending'=>'warn','failed'=>'down'][$t->status] ?? 'idle'; @endphp
+                        <span class="text-nowrap"><span class="dot dot-{{ $d }}"></span>{{ $t->status }}</span>
                     </td>
                     <td class="small">{{ $t->paid_at?->format('d/m/Y H:i') ?? '-' }}</td>
                     <td class="text-end text-nowrap">
@@ -59,7 +56,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada transaksi.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted py-4">Belum ada transaksi. Tagihan muncul setelah pelanggan memulai pembayaran.</td></tr>
             @endforelse
             </tbody>
         </table>

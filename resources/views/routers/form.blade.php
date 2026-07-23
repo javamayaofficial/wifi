@@ -2,8 +2,6 @@
 @section('title', $router->exists ? 'Edit Router' : 'Tambah Router')
 
 @section('content')
-<h4 class="mb-4">{{ $router->exists ? 'Edit' : 'Tambah' }} Router MikroTik</h4>
-
 <form method="POST" action="{{ $router->exists ? url("/routers/{$router->id}") : url('/routers') }}">
     @csrf
     @if($router->exists) @method('PUT') @endif

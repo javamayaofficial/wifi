@@ -2,8 +2,6 @@
 @section('title', 'Voucher Hotspot')
 
 @section('content')
-<h4 class="mb-3">Voucher Hotspot</h4>
-
 <div class="alert alert-success d-flex justify-content-between align-items-center">
     <span>Omzet voucher bulan ini</span>
     <b class="fs-5">Rp {{ number_format($omzetBulan, 0, ',', '.') }}</b>
@@ -65,7 +63,7 @@
                 <p class="text-muted small">Stok berpindah ke agen. Belum dihitung sebagai omzet.</p>
                 @if($resellers->isEmpty())
                     <p class="text-muted small mb-0">
-                        Belum ada mitra. Tambahkan dulu di <a href="{{ url('/resellers') }}">Mitra / Reseller</a>.
+                        Belum ada mitra. Tambahkan warung atau agen yang menjual atas nama Anda. Tambahkan dulu di <a href="{{ url('/resellers') }}">Mitra / Reseller</a>.
                     </p>
                 @else
                     <form method="POST" action="{{ url('/vouchers/handover') }}" class="mb-3">
@@ -172,6 +170,17 @@
                 </select>
             </div>
             <div class="col-auto"><button class="btn btn-sm btn-outline-primary">Filter</button></div>
+            <div class="col-auto">
+                <form method="POST" action="{{ url('/vouchers/sync-usage') }}" class="d-flex gap-2">
+                    @csrf
+                    <select name="router_id" class="form-select form-select-sm" style="max-width:160px" required>
+                        @foreach($routers as $r)
+                            <option value="{{ $r->id }}">{{ $r->name }}</option>
+                        @endforeach
+                    </select>
+                    <button class="btn btn-sm btn-outline-secondary text-nowrap">Sinkron pemakaian</button>
+                </form>
+            </div>
             @if(request('batch'))
                 <div class="col-auto">
                     <a href="{{ url('/vouchers/print?batch=' . request('batch')) }}" target="_blank"
@@ -209,7 +218,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada voucher.</td></tr>
+                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada voucher. Buat profil dulu, lalu generate batch pertama.</td></tr>
                     @endforelse
                     </tbody>
                 </table>

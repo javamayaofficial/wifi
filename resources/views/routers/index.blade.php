@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 @section('title', 'Router')
 
+@section('actions')
+    <a href="{{ url('/routers/create') }}" class="btn btn-primary btn-sm">Tambah router</a>
+@endsection
+
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Router MikroTik</h4>
-    <a href="{{ url('/routers/create') }}" class="btn btn-primary btn-sm">+ Tambah Router</a>
-</div>
 
 <div class="card shadow-sm border-0">
     <div class="table-responsive">
@@ -19,9 +19,11 @@
                     <td>{{ $r->name }}</td>
                     <td>
                         @if($r->is_up)
-                            <span class="badge bg-success">UP</span>
+                            <span class="text-nowrap"><span class="dot dot-ok"></span>Normal</span>
                         @else
-                            <span class="badge bg-danger">DOWN</span>
+                            <span class="text-nowrap" style="color:var(--down)">
+                                <span class="dot dot-down dot-live"></span>Tidak terjangkau
+                            </span>
                             @if($r->down_since)
                                 <div class="small text-muted">sejak {{ $r->down_since->diffForHumans() }}</div>
                             @endif
@@ -45,7 +47,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="8" class="text-center text-muted py-4">Belum ada router.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-4">Belum ada router. Tambahkan MikroTik Anda, lalu uji koneksinya.</td></tr>
             @endforelse
             </tbody>
         </table>

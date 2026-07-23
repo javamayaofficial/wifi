@@ -2,8 +2,6 @@
 @section('title', $plan->exists ? 'Edit Paket' : 'Tambah Paket')
 
 @section('content')
-<h4 class="mb-4">{{ $plan->exists ? 'Edit' : 'Tambah' }} Paket THRE.F.NET</h4>
-
 <form method="POST" action="{{ $plan->exists ? url("/plans/{$plan->id}") : url('/plans') }}">
     @csrf
     @if($plan->exists) @method('PUT') @endif
@@ -28,8 +26,22 @@
             </div>
             <div class="col-12">
                 <label class="form-label">Profil MikroTik</label>
-                <input type="text" name="mikrotik_profile" class="form-control" value="{{ old('mikrotik_profile', $plan->mikrotik_profile) }}" required>
-                <div class="form-text">Nama PPP profile di router yang sesuai bandwidth paket ini.</div>
+                <div class="d-flex gap-2">
+                    <input type="text" name="mikrotik_profile" id="mkProfile" list="mkList"
+                           class="form-control" value="{{ old('mikrotik_profile', $plan->mikrotik_profile) }}" required>
+                    <select id="mkRouter" class="form-select" style="max-width:190px">
+                        @foreach(\App\Models\Router::orderBy('name')->get() as $r)
+                            <option value="{{ $r->id }}">{{ $r->name }}</option>
+                        @endforeach
+                    </select>
+                    <button type="button" id="mkFetch" class="btn btn-outline-secondary text-nowrap">Ambil</button>
+                </div>
+                <datalist id="mkList"></datalist>
+                <div class="form-text" id="mkHint">
+                    Nama PPP profile di router yang sesuai bandwidth paket ini.
+                    Klik <b>Ambil</b> untuk memuat daftar dari router — salah ketik di sini
+                    membuat aktivasi pelanggan gagal.
+                </div>
             </div>
         </div>
     </div>
@@ -39,4 +51,24 @@
         <a href="{{ url('/plans') }}" class="btn btn-link">Batal</a>
     </div>
 </form>
+<script>
+document.getElementById('mkFetch')?.addEventListener('click', function () {
+    var hint = document.getElementById('mkHint');
+    var id   = document.getElementById('mkRouter').value;
+
+    hint.textContent = 'Menghubungi router...';
+
+    fetch('{{ url("/mikrotik/profiles") }}?router=' + id)
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+            if (d.error) { hint.textContent = 'Gagal: ' + d.error; return; }
+            var list = document.getElementById('mkList');
+            list.innerHTML = d.profiles.map(function (p) {
+                return '<option value="' + p + '">';
+            }).join('');
+            hint.textContent = d.profiles.length + ' profile ditemukan. Klik kolom di atas untuk memilih.';
+        })
+        .catch(function () { hint.textContent = 'Gagal menghubungi server.'; });
+});
+</script>
 @endsection

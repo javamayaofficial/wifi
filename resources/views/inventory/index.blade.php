@@ -2,8 +2,6 @@
 @section('title', 'Inventory')
 
 @section('content')
-<h4 class="mb-3">Inventory Perangkat</h4>
-
 <div class="row g-3 mb-3">
     @foreach(['gudang' => 'secondary', 'terpasang' => 'success', 'rusak' => 'warning', 'hilang' => 'danger'] as $st => $warna)
         <div class="col-6 col-lg-3">
@@ -122,7 +120,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada perangkat.</td></tr>
+                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada perangkat. Catat router, ONU, dan radio agar mudah dilacak.</td></tr>
                     @endforelse
                     </tbody>
                 </table>

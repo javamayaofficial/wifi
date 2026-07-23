@@ -2,9 +2,8 @@
 @section('title', 'Monitoring')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Monitoring MikroTik</h4>
-    @if($router)
+<div class="d-flex justify-content-end align-items-center mb-3">
+        @if($router)
         <form method="POST" action="{{ url('/mikrotik/refresh') }}">
             @csrf
             <input type="hidden" name="router" value="{{ $router->id }}">

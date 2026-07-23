@@ -2,7 +2,6 @@
 @section('title', 'Audit Log')
 
 @section('content')
-<h4 class="mb-1">Audit Log</h4>
 <p class="text-muted small mb-4">
     Catatan siapa mengubah apa. Nilai sensitif (password, token) tidak pernah disimpan di sini.
 </p>

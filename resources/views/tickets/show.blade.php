@@ -4,7 +4,6 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
-        <h4 class="mb-1">{{ $ticket->title }}</h4>
         <code>{{ $ticket->ticket_number }}</code>
         <span class="badge bg-{{ $ticket->status === 'selesai' ? 'success' : ($ticket->status === 'baru' ? 'danger' : 'primary') }} ms-2">
             {{ $ticket->status }}

@@ -2,8 +2,6 @@
 @section('title', 'Pengeluaran')
 
 @section('content')
-<h4 class="mb-3">Pengeluaran</h4>
-
 <div class="row g-3">
     <div class="col-lg-4">
         <div class="card shadow-sm border-0 mb-3">
