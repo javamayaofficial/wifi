@@ -82,13 +82,30 @@ class CustomersImport implements ToCollection
         });
 
         $headerRow = $rows->first();
-        $hasHeaderRow = $this->looksLikeHeaderRow($headerRow);
+        $nextRow = $rows->skip(1)->first();
+        $headerMapping = $this->detectHeaderMapping($headerRow);
+        $hasHeaderRow = $this->looksLikeHeaderRow($headerRow, $nextRow);
         $mapping = $hasHeaderRow
-            ? $this->detectHeaderMapping($headerRow)
+            ? $headerMapping
             : self::POSITIONAL_FIELDS;
 
         $this->detectedColumns = $mapping;
         $startIndex = $hasHeaderRow ? 1 : 0;
+
+        if ($hasHeaderRow) {
+            $missingRequired = collect(['name', 'username', 'plan', 'router', 'expired_date'])
+                ->reject(fn ($field) => in_array($field, $mapping, true))
+                ->values()
+                ->all();
+
+            if ($missingRequired !== []) {
+                $this->errors[] = 'Header file terdeteksi, tetapi kolom wajib ini belum bisa dipetakan otomatis: '
+                    . implode(', ', $missingRequired)
+                    . '. Silakan sesuaikan nama header file import.';
+
+                return;
+            }
+        }
 
         foreach ($rows->slice($startIndex)->values() as $index => $row) {
             $line = $index + $startIndex + 1;
@@ -169,9 +186,31 @@ class CustomersImport implements ToCollection
         return $mapping;
     }
 
-    protected function looksLikeHeaderRow($row): bool
+    protected function looksLikeHeaderRow($row, $nextRow = null): bool
     {
-        return count($this->detectHeaderMapping($row)) >= 2;
+        $detectedHeaderCount = count($this->detectHeaderMapping($row));
+
+        if ($detectedHeaderCount >= 1) {
+            return true;
+        }
+
+        $values = collect($this->rowToArray($row))
+            ->map(fn ($value) => $this->cleanString($value))
+            ->filter()
+            ->values();
+
+        if ($values->isEmpty()) {
+            return false;
+        }
+
+        $looksLikeLabels = $values->every(function ($value) {
+            return ! $this->looksLikeEmail($value)
+                && ! $this->looksLikePhone($value)
+                && $this->parseDate($value) === null
+                && $this->parseCoordinate($value) === null;
+        });
+
+        return $looksLikeLabels && $this->looksLikeDataRow($nextRow);
     }
 
     protected function extractRowData($row, array $mapping): array
@@ -253,7 +292,8 @@ class CustomersImport implements ToCollection
         $normalized = $this->normalizeKey($value);
 
         return match ($normalized) {
-            '', 'aktif', 'active', 'enabled', 'enable' => 'active',
+            '' => 'new',
+            'aktif', 'active', 'enabled', 'enable' => 'active',
             'isolated', 'isolir', 'disabled', 'disable', 'blocked' => 'isolated',
             'suspended', 'suspend', 'nonaktif', 'non_active' => 'suspended',
             'baru', 'new', 'pending' => 'new',
@@ -270,6 +310,43 @@ class CustomersImport implements ToCollection
         $value = str_replace(',', '.', trim((string) $value));
 
         return is_numeric($value) ? (float) $value : null;
+    }
+
+    protected function looksLikeDataRow($row): bool
+    {
+        if ($row === null) {
+            return false;
+        }
+
+        $values = collect($this->rowToArray($row))
+            ->map(fn ($value) => $this->cleanString($value))
+            ->filter()
+            ->values();
+
+        if ($values->isEmpty()) {
+            return false;
+        }
+
+        return $values->contains(fn ($value) => $this->looksLikeEmail($value))
+            || $values->contains(fn ($value) => $this->looksLikePhone($value))
+            || $values->contains(fn ($value) => $this->parseDate($value) !== null)
+            || $values->contains(fn ($value) => $this->parseCoordinate($value) !== null);
+    }
+
+    protected function looksLikeEmail(?string $value): bool
+    {
+        return $value !== null && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    protected function looksLikePhone(?string $value): bool
+    {
+        if ($value === null) {
+            return false;
+        }
+
+        $digits = preg_replace('/\D+/', '', $value);
+
+        return strlen($digits) >= 8 && strlen($digits) <= 16;
     }
 
     protected function parseDate($value): ?string

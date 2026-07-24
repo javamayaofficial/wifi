@@ -75,6 +75,65 @@ class CustomerImportAndMapTest extends TestCase
         $this->assertSame('106.8456700', (string) $customer->longitude);
     }
 
+    public function test_import_without_status_defaults_customer_to_new(): void
+    {
+        [$plan, $router] = $this->seedPlanAndRouter();
+
+        $import = new CustomersImport();
+        $import->collection(new Collection([
+            new Collection([
+                'Nama',
+                'PPPoE',
+                'Sandi',
+                'Profile',
+                'Server',
+                'Jatuh Tempo',
+            ]),
+            new Collection([
+                'Andi Saputra',
+                'andi-pppoe',
+                'rahasia123',
+                $plan->mikrotik_profile,
+                $router->ip,
+                '2026-08-10',
+            ]),
+        ]));
+
+        $this->assertSame(1, $import->successCount);
+        $this->assertSame([], $import->errors);
+        $this->assertSame('new', Customer::query()->firstOrFail()->status);
+    }
+
+    public function test_import_stops_when_header_exists_but_required_columns_are_not_mapped(): void
+    {
+        $this->seedPlanAndRouter();
+
+        $import = new CustomersImport();
+        $import->collection(new Collection([
+            new Collection([
+                'Nama Client',
+                'User PPP',
+                'Secret Pass',
+                'Layanan',
+                'NAS',
+                'Tanggal Jatuh',
+            ]),
+            new Collection([
+                'Dewi Lestari',
+                'dewi-pppoe',
+                'rahasia123',
+                'paket20',
+                '10.10.10.1',
+                '2026-08-10',
+            ]),
+        ]));
+
+        $this->assertSame(0, $import->successCount);
+        $this->assertCount(1, $import->errors);
+        $this->assertStringContainsString('Header file terdeteksi', $import->errors[0]);
+        $this->assertDatabaseCount('thre_customers', 0);
+    }
+
     public function test_dashboard_shows_mapped_customer_identity_summary(): void
     {
         $user = User::factory()->create([
